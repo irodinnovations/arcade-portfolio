@@ -81,13 +81,15 @@ export function Portfolio() {
           onLaunch={handleLaunch}
         />
 
-        <GameScreen
-          isVisible={screen === 'game'}
-          muted={muted}
-          playSound={play}
-          onQuit={handleGameQuit}
-          onShake={triggerFlash}
-        />
+        {screen === 'game' && (
+          <GameScreen
+            isVisible={true}
+            muted={muted}
+            playSound={play}
+            onQuit={handleGameQuit}
+            onShake={triggerFlash}
+          />
+        )}
       </div>
     </ErrorBoundary>
   );
