@@ -3,7 +3,7 @@
 import { useState, useCallback, useRef } from 'react';
 import { StartScreen } from '@/components/screens/StartScreen';
 import { SelectScreen } from '@/components/screens/SelectScreen';
-import { GameScreen } from '@/components/game';
+import { GameScreenV2 } from '@/components/game/GameScreenV2';
 import { Background } from '@/components/effects/Background';
 import { CRTOverlay } from '@/components/effects/CRTOverlay';
 import { FlashOverlay } from '@/components/effects/FlashOverlay';
@@ -22,14 +22,6 @@ export function Portfolio() {
 
   const triggerFlash = useCallback(() => {
     setFlashTrigger((prev) => prev + 1);
-  }, []);
-
-  const triggerShake = useCallback(() => {
-    if (!containerRef.current) return;
-    containerRef.current.classList.add('animate-shake');
-    setTimeout(() => {
-      containerRef.current?.classList.remove('animate-shake');
-    }, 300);
   }, []);
 
   const handleStart = useCallback(() => {
@@ -89,12 +81,10 @@ export function Portfolio() {
           onLaunch={handleLaunch}
         />
 
-        <GameScreen
+        <GameScreenV2
           isVisible={screen === 'game'}
           muted={muted}
-          playSound={play}
           onQuit={handleGameQuit}
-          onShake={triggerShake}
         />
       </div>
     </ErrorBoundary>

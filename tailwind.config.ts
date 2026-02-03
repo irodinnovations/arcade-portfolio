@@ -35,6 +35,8 @@ const config: Config = {
         p1Flash: 'p1Flash 0.5s ease infinite alternate',
         timerPulse: 'timerPulse 0.5s ease infinite',
         shake: 'shake 0.3s ease-out',
+        shimmer: 'shimmer 2s linear infinite',
+        slideUp: 'slideUp 0.5s ease-out',
       },
       keyframes: {
         rotate: {
@@ -93,6 +95,14 @@ const config: Config = {
           '40%': { transform: 'translateX(8px) rotate(0.5deg)' },
           '60%': { transform: 'translateX(-4px) rotate(-0.3deg)' },
           '80%': { transform: 'translateX(4px) rotate(0.3deg)' },
+        },
+        shimmer: {
+          '0%': { transform: 'translateX(-100%)' },
+          '100%': { transform: 'translateX(100%)' },
+        },
+        slideUp: {
+          '0%': { transform: 'translateY(20px)', opacity: '0' },
+          '100%': { transform: 'translateY(0)', opacity: '1' },
         },
       },
     },
