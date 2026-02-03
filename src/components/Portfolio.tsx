@@ -31,15 +31,13 @@ export function Portfolio() {
   }, [play]);
 
   const handleTimerEnd = useCallback(() => {
-    // Start game when timer ends
-    play('launch');
-    setScreen('game');
-    // For now, just reset to select screen
-    // Game will be implemented in Step 9
-    setTimeout(() => {
-      setScreen('select');
-    }, 100);
-  }, [play]);
+    // TODO: Start easter egg game when timer ends
+    // For now, play a sound and flash to indicate time's up
+    // Game will be implemented in a future iteration
+    play('countdown');
+    triggerFlash();
+    // The SelectScreen will handle its own timer reset
+  }, [play, triggerFlash]);
 
   const handleNavigate = useCallback(() => {
     play('navigate');

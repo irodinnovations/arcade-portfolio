@@ -88,7 +88,7 @@ export function SelectScreen({
       setTimer((prev) => {
         if (prev <= 1) {
           onTimerEnd();
-          return 0;
+          return TIMER_DURATION; // Reset timer instead of staying at 0
         }
         return prev - 1;
       });
