@@ -59,7 +59,7 @@ export function StartScreen({ onStart, isExiting }: StartScreenProps) {
           }`}
         >
           <Image
-            src="/images/mascots/rj-logo.webp"
+            src="/images/rj-logo.png"
             alt="RJ Logo"
             width={200}
             height={200}
