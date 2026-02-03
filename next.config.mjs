@@ -1,5 +1,3 @@
-import type { NextConfig } from 'next';
-
 const securityHeaders = [
   {
     key: 'Content-Security-Policy',
@@ -42,7 +40,8 @@ const securityHeaders = [
   },
 ];
 
-const nextConfig: NextConfig = {
+/** @type {import('next').NextConfig} */
+const nextConfig = {
   async headers() {
     return [
       {
