@@ -88,7 +88,8 @@ export function SelectScreen({
       setTimer((prev) => {
         if (prev <= 1) {
           onTimerEnd();
-          return TIMER_DURATION; // Reset timer instead of staying at 0
+          // Don't reset - the game will start!
+          return 0;
         }
         return prev - 1;
       });
@@ -96,6 +97,13 @@ export function SelectScreen({
 
     return () => clearInterval(interval);
   }, [isVisible, onTimerEnd]);
+
+  // Reset timer when becoming visible again (e.g., returning from game)
+  useEffect(() => {
+    if (isVisible) {
+      setTimer(TIMER_DURATION);
+    }
+  }, [isVisible]);
 
   if (!selectedProject) return null;
 

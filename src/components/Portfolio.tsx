@@ -1,8 +1,9 @@
 'use client';
 
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useRef } from 'react';
 import { StartScreen } from '@/components/screens/StartScreen';
 import { SelectScreen } from '@/components/screens/SelectScreen';
+import { GameScreen } from '@/components/game';
 import { Background } from '@/components/effects/Background';
 import { CRTOverlay } from '@/components/effects/CRTOverlay';
 import { FlashOverlay } from '@/components/effects/FlashOverlay';
@@ -16,10 +17,19 @@ export function Portfolio() {
   const [screen, setScreen] = useState<ScreenState>('start');
   const [isExiting, setIsExiting] = useState(false);
   const [flashTrigger, setFlashTrigger] = useState(0);
+  const containerRef = useRef<HTMLDivElement>(null);
   const { muted, toggle, play } = useAudio();
 
   const triggerFlash = useCallback(() => {
     setFlashTrigger((prev) => prev + 1);
+  }, []);
+
+  const triggerShake = useCallback(() => {
+    if (!containerRef.current) return;
+    containerRef.current.classList.add('animate-shake');
+    setTimeout(() => {
+      containerRef.current?.classList.remove('animate-shake');
+    }, 300);
   }, []);
 
   const handleStart = useCallback(() => {
@@ -31,13 +41,15 @@ export function Portfolio() {
   }, [play]);
 
   const handleTimerEnd = useCallback(() => {
-    // TODO: Start easter egg game when timer ends
-    // For now, play a sound and flash to indicate time's up
-    // Game will be implemented in a future iteration
+    // Start easter egg game when timer ends!
     play('countdown');
     triggerFlash();
-    // The SelectScreen will handle its own timer reset
+    setScreen('game');
   }, [play, triggerFlash]);
+
+  const handleGameQuit = useCallback(() => {
+    setScreen('select');
+  }, []);
 
   const handleNavigate = useCallback(() => {
     play('navigate');
@@ -55,7 +67,10 @@ export function Portfolio() {
 
   return (
     <ErrorBoundary>
-      <div className="relative min-h-screen overflow-hidden bg-[#050810]">
+      <div
+        ref={containerRef}
+        className="relative min-h-screen overflow-hidden bg-[#050810]"
+      >
         <Background />
         <CRTOverlay />
         <FlashOverlay trigger={flashTrigger} />
@@ -72,6 +87,14 @@ export function Portfolio() {
           onNavigate={handleNavigate}
           onSelect={handleSelect}
           onLaunch={handleLaunch}
+        />
+
+        <GameScreen
+          isVisible={screen === 'game'}
+          muted={muted}
+          playSound={play}
+          onQuit={handleGameQuit}
+          onShake={triggerShake}
         />
       </div>
     </ErrorBoundary>
