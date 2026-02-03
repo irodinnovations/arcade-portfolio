@@ -131,41 +131,59 @@ export function SelectScreen({
       <main
         id="main-content"
         tabIndex={-1}
-        className="flex flex-1 flex-col overflow-hidden px-4 py-4 md:px-8"
+        className="flex min-h-0 flex-1 flex-col overflow-hidden px-4 py-4 md:px-8"
       >
-        {/* Center stage */}
-        <div className="flex flex-1 flex-col items-center justify-center">
-          <MascotDisplay project={selectedProject} />
+        {/* Center stage - scrollable area */}
+        <div className="flex min-h-0 flex-1 flex-col items-center justify-start overflow-y-auto scrollbar-thin scrollbar-track-transparent scrollbar-thumb-cyan-900/50">
+          <div className="flex flex-shrink-0 items-center justify-center">
+            <MascotDisplay project={selectedProject} />
+          </div>
 
           {/* Project info */}
-          <div className="mt-4 max-w-[600px] text-center">
+          <div className="mt-4 max-w-[600px] flex-shrink-0 pb-4 text-center">
             <h2 className="mb-2 font-orbitron text-[clamp(1.5rem,4vw,2.5rem)] font-bold uppercase tracking-wider text-white [text-shadow:0_0_20px_rgba(0,212,255,0.5)]">
               {selectedProject.name}
             </h2>
 
             <Badge status={selectedProject.status} />
 
-            <p className="mb-4 mt-3 text-sm leading-relaxed text-[#5080b0] md:text-base">
+            <p className="mb-4 mt-3 line-clamp-4 text-sm leading-relaxed text-[#5080b0] md:line-clamp-none md:text-base">
               {selectedProject.description}
             </p>
 
             {/* Action buttons */}
             <div className="flex flex-wrap justify-center gap-3">
-              <Button
-                onClick={handleLaunch}
-                disabled={!selectedProject.url}
-                variant="primary"
-              >
-                Launch
-              </Button>
-              {selectedProject.github && (
+              {selectedProject.isPersonal ? (
+                <>
+                  <Button
+                    onClick={() =>
+                      window.open('https://www.linkedin.com/in/rodney-john', '_blank')
+                    }
+                    variant="primary"
+                  >
+                    LinkedIn
+                  </Button>
+                  <Button
+                    onClick={() => {
+                      const contactSection = document.getElementById('contact-section');
+                      if (contactSection) {
+                        contactSection.scrollIntoView({ behavior: 'smooth' });
+                      } else {
+                        window.location.href = 'mailto:irodinnovations@gmail.com?subject=Let\'s Connect';
+                      }
+                    }}
+                    variant="secondary"
+                  >
+                    Connect
+                  </Button>
+                </>
+              ) : (
                 <Button
-                  onClick={() =>
-                    window.open(selectedProject.github ?? '', '_blank')
-                  }
-                  variant="secondary"
+                  onClick={handleLaunch}
+                  disabled={!selectedProject.url}
+                  variant="primary"
                 >
-                  GitHub
+                  Launch
                 </Button>
               )}
             </div>

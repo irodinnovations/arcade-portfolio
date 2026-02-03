@@ -12,7 +12,7 @@ export function MascotDisplay({ project }: MascotDisplayProps) {
   const reducedMotion = useReducedMotion();
 
   return (
-    <div className="relative flex h-[350px] w-full max-w-[500px] items-center justify-center">
+    <div className="relative flex h-[200px] w-full max-w-[500px] items-center justify-center sm:h-[250px] md:h-[300px] lg:h-[350px]">
       {/* Glow effect */}
       <div
         className={`absolute bottom-0 left-1/2 h-[100px] w-[300px] -translate-x-1/2 bg-[radial-gradient(ellipse_at_center,rgba(0,212,255,0.3)_0%,transparent_70%)] blur-[20px] ${

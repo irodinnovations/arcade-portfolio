@@ -74,8 +74,11 @@ export function StartScreen({ onStart, isExiting }: StartScreenProps) {
         </h1>
 
         {/* Subtitle */}
-        <p className="mb-16 font-rajdhani text-[clamp(0.9rem,2.5vw,1.3rem)] font-medium uppercase tracking-[0.4em] text-amber-400">
-          Operations • Innovation • Builder
+        <p className="mb-4 font-rajdhani text-[clamp(0.9rem,2.5vw,1.3rem)] font-medium uppercase tracking-[0.3em] text-amber-400">
+          Operations Performance Manager
+        </p>
+        <p className="mb-16 font-rajdhani text-[clamp(0.7rem,2vw,1rem)] font-normal tracking-[0.2em] text-[#5080b0]">
+          Analytics & Reporting Systems • Building Data Teams Trust
         </p>
 
         {/* Press Start */}
