@@ -9,6 +9,7 @@ import {
   drawEnemy,
   drawBullet,
   drawDrop,
+  drawParticles,
   drawInstructions,
 } from './renderer';
 
@@ -21,6 +22,10 @@ interface Sprites {
   player: HTMLImageElement;
   boss: HTMLImageElement;
   background: HTMLImageElement;
+  bomb: HTMLImageElement;
+  health: HTMLImageElement;
+  shield: HTMLImageElement;
+  explosion: HTMLImageElement;
 }
 
 export function GameCanvas({ state, dimensions }: GameCanvasProps) {
@@ -28,17 +33,25 @@ export function GameCanvas({ state, dimensions }: GameCanvasProps) {
   const spritesRef = useRef<Sprites | null>(null);
   const animFrameRef = useRef<number>(0);
 
-  // Load sprites
+  // Load all sprites
   useEffect(() => {
     const sprites: Sprites = {
       player: new Image(),
       boss: new Image(),
       background: new Image(),
+      bomb: new Image(),
+      health: new Image(),
+      shield: new Image(),
+      explosion: new Image(),
     };
 
     sprites.player.src = '/images/game/player-ship.webp';
     sprites.boss.src = '/images/game/boss-rodney.webp';
     sprites.background.src = '/images/game/background.webp';
+    sprites.bomb.src = '/images/game/bomb-pickup.png';
+    sprites.health.src = '/images/game/health-pickup.png';
+    sprites.shield.src = '/images/game/shield-pickup.png';
+    sprites.explosion.src = '/images/game/explosion-sprite.png';
 
     spritesRef.current = sprites;
   }, []);
@@ -50,12 +63,16 @@ export function GameCanvas({ state, dimensions }: GameCanvasProps) {
 
     if (!canvas || !ctx || !sprites) return;
 
-    // Draw background
+    // Clear and draw background
+    ctx.clearRect(0, 0, dimensions.width, dimensions.height);
     drawBackground(ctx, dimensions, sprites);
 
-    // Draw drops
+    // Draw particles (behind entities)
+    drawParticles(ctx, state.particles);
+
+    // Draw drops with sprites
     for (const drop of state.drops) {
-      drawDrop(ctx, drop);
+      drawDrop(ctx, drop, sprites);
     }
 
     // Draw enemies
@@ -88,7 +105,7 @@ export function GameCanvas({ state, dimensions }: GameCanvasProps) {
 
   // Start render loop
   useEffect(() => {
-    if (state.phase === 'glitch' || !state.active) {
+    if (state.phase === 'glitch' || (!state.active && state.phase !== 'paused')) {
       return;
     }
 
@@ -106,10 +123,11 @@ export function GameCanvas({ state, dimensions }: GameCanvasProps) {
       ref={canvasRef}
       width={dimensions.width}
       height={dimensions.height}
-      className="block touch-none"
+      className="block touch-none rounded-lg"
       style={{
         maxWidth: '100%',
         maxHeight: '100%',
+        boxShadow: '0 0 40px rgba(0, 255, 136, 0.2)',
       }}
     />
   );

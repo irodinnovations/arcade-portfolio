@@ -26,6 +26,7 @@ export function createEnemy(dimensions: GameDimensions): Enemy {
     speed: ENEMY_SPEED_MIN + Math.random() * (ENEMY_SPEED_MAX - ENEMY_SPEED_MIN),
     health: type === 'carrier' ? 3 : 1,
     lastShot: 0,
+    hitFlash: 0,
   };
 }
 
@@ -39,6 +40,7 @@ export function createBullet(x: number, y: number): Bullet {
     speed: BULLET_SPEED,
     damage: 1,
     isBomb: false,
+    trail: [],
   };
 }
 
@@ -52,6 +54,7 @@ export function createBomb(x: number, y: number): Bullet {
     speed: BOMB_SPEED,
     damage: BOMB_DAMAGE,
     isBomb: true,
+    trail: [],
   };
 }
 
@@ -65,6 +68,7 @@ export function createEnemyBullet(x: number, y: number, speed: number = 4): Bull
     speed,
     damage: 15,
     isEnemy: true,
+    trail: [],
   };
 }
 
@@ -78,6 +82,7 @@ export function createBossBullet(x: number, y: number): Bullet {
     speed: 5,
     damage: 15,
     isEnemy: true,
+    trail: [],
   };
 }
 
@@ -91,6 +96,7 @@ export function createDrop(x: number, y: number): Drop {
     y,
     type: types[Math.floor(Math.random() * types.length)] ?? 'bomb',
     pulse: 0,
+    magnetized: false,
   };
 }
 

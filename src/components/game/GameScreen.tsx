@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect, useCallback, useRef } from 'react';
-import type { GameState, GameDimensions } from './types';
+import type { GameState, GameDimensions, Particle } from './types';
 import { createInitialState, resetGameState } from './gameState';
 import { createEnemy, createBomb } from './entities';
 import { useGameLoop } from './useGameLoop';
@@ -19,6 +19,8 @@ interface GameScreenProps {
   onQuit: () => void;
   onShake: () => void;
 }
+
+const ASPECT_RATIO = 600 / 700;
 
 export function GameScreen({
   isVisible,
@@ -42,11 +44,24 @@ export function GameScreen({
 
   const { playVoice } = useGameAudio({ muted });
 
-  // Calculate canvas dimensions
+  // Responsive canvas dimensions - scale to viewport properly
   useEffect(() => {
     const updateDimensions = () => {
-      const width = Math.min(600, window.innerWidth - 20);
-      const height = Math.min(700, window.innerHeight - 100);
+      const maxWidth = window.innerWidth - 20;
+      const maxHeight = window.innerHeight - 100;
+
+      let width = maxWidth;
+      let height = width / ASPECT_RATIO;
+
+      if (height > maxHeight) {
+        height = maxHeight;
+        width = height * ASPECT_RATIO;
+      }
+
+      // Ensure minimum size for playability
+      width = Math.max(320, Math.floor(width));
+      height = Math.max(373, Math.floor(height));
+
       setDimensions({ width, height });
     };
 
@@ -70,6 +85,29 @@ export function GameScreen({
     enemySpawnRef.current && clearInterval(enemySpawnRef.current);
   }, []);
 
+  // Spawn particles helper
+  const spawnParticles = useCallback((x: number, y: number, color: string, count: number = 8) => {
+    const particles: Particle[] = [];
+    for (let i = 0; i < count; i++) {
+      const angle = (Math.PI * 2 * i) / count + Math.random() * 0.5;
+      const speed = 2 + Math.random() * 3;
+      particles.push({
+        x,
+        y,
+        vx: Math.cos(angle) * speed,
+        vy: Math.sin(angle) * speed,
+        life: 1,
+        maxLife: 1,
+        color,
+        size: 3 + Math.random() * 4,
+      });
+    }
+    setGameState((s) => ({
+      ...s,
+      particles: [...s.particles, ...particles],
+    }));
+  }, []);
+
   // Game loop
   const { start: startLoop, stop: stopLoop } = useGameLoop({
     state: gameState,
@@ -80,6 +118,7 @@ export function GameScreen({
     onShake,
     playSound: playSound as (type: 'tick' | 'select' | 'launch') => void,
     playVoice,
+    spawnParticles,
   });
 
   // Start the wave phase
@@ -124,22 +163,51 @@ export function GameScreen({
       });
     }, 1000);
 
-    // Enemy spawning
-    enemySpawnRef.current = setInterval(() => {
+    // Enemy spawning with progressive difficulty
+    let spawnRate = ENEMY_SPAWN_RATE;
+    const spawnEnemy = () => {
       setGameState((s) => {
         if (!s.active || s.phase !== 'wave') return s;
+        
+        // Increase spawn rate over time
+        const progress = 1 - s.waveTimer / WAVE_DURATION;
+        const enemyCount = Math.floor(1 + progress * 2); // 1-3 enemies at once
+        const newEnemies = [];
+        for (let i = 0; i < enemyCount; i++) {
+          newEnemies.push(createEnemy(dimensions));
+        }
+        
         return {
           ...s,
-          enemies: [...s.enemies, createEnemy(dimensions)],
+          enemies: [...s.enemies, ...newEnemies],
         };
       });
-    }, ENEMY_SPAWN_RATE);
+      
+      // Speed up spawning as wave progresses
+      enemySpawnRef.current = setTimeout(spawnEnemy, spawnRate * (0.5 + Math.random() * 0.5));
+    };
+    
+    enemySpawnRef.current = setTimeout(spawnEnemy, spawnRate);
   }, [dimensions, startLoop, playVoice, onShake]);
 
   // Glitch sequence complete handler
   const handleGlitchComplete = useCallback(() => {
     startWavePhase();
   }, [startWavePhase]);
+
+  // Toggle pause
+  const togglePause = useCallback(() => {
+    setGameState((s) => {
+      if (s.phase === 'paused') {
+        startLoop();
+        return { ...s, phase: s.previousPhase || 'wave', previousPhase: null };
+      } else if (s.phase === 'wave' || s.phase === 'boss') {
+        stopLoop();
+        return { ...s, phase: 'paused', previousPhase: s.phase };
+      }
+      return s;
+    });
+  }, [startLoop, stopLoop]);
 
   // Fire bomb
   const handleFireBomb = useCallback(() => {
@@ -178,12 +246,25 @@ export function GameScreen({
     if (!isVisible) return;
 
     const handleKeyDown = (e: KeyboardEvent) => {
-      if (gameState.phase === 'glitch' && e.key === 'Escape') {
-        handleGlitchComplete();
+      // Escape to skip glitch or quit
+      if (e.key === 'Escape') {
+        if (gameState.phase === 'glitch') {
+          handleGlitchComplete();
+        } else if (gameState.phase === 'paused') {
+          handleQuit();
+        } else {
+          handleQuit();
+        }
         return;
       }
 
-      if (!gameState.active) return;
+      // P to pause
+      if (e.key === 'p' || e.key === 'P') {
+        togglePause();
+        return;
+      }
+
+      if (!gameState.active || gameState.phase === 'paused') return;
 
       setGameState((s) => {
         const keys = { ...s.keys };
@@ -195,10 +276,6 @@ export function GameScreen({
 
         if (e.key === ' ' && s.phase === 'boss' && s.player.bombs > 0) {
           handleFireBomb();
-        }
-
-        if (e.key === 'Escape') {
-          handleQuit();
         }
 
         return { ...s, keys };
@@ -225,14 +302,14 @@ export function GameScreen({
       window.removeEventListener('keydown', handleKeyDown);
       window.removeEventListener('keyup', handleKeyUp);
     };
-  }, [isVisible, gameState.phase, gameState.active, handleFireBomb, handleQuit, handleGlitchComplete]);
+  }, [isVisible, gameState.phase, gameState.active, handleFireBomb, handleQuit, handleGlitchComplete, togglePause]);
 
-  // Touch controls
+  // Touch controls with SNAPPY response
   useEffect(() => {
     if (!isVisible || !containerRef.current) return;
 
     const handleTouch = (e: TouchEvent) => {
-      if (!gameState.active) return;
+      if (!gameState.active || gameState.phase === 'paused') return;
       e.preventDefault();
 
       const touch = e.touches[0];
@@ -241,11 +318,21 @@ export function GameScreen({
       const touchX = touch.clientX - rect.left;
       const touchY = touch.clientY - rect.top;
 
+      // Scale touch to canvas coordinates
+      const scaleX = dimensions.width / rect.width;
+      const scaleY = dimensions.height / rect.height;
+      const canvasX = touchX * scaleX;
+      const canvasY = touchY * scaleY;
+
       setGameState((s) => {
         const player = { ...s.player };
-        const targetY = Math.max(dimensions.height * 0.5, touchY);
-        player.x += (touchX - player.x) * 0.15;
-        player.y += (targetY - player.y) * 0.15;
+        const targetY = Math.max(dimensions.height * 0.5, canvasY);
+        
+        // SNAPPY lerp - 0.35 is much more responsive than 0.15
+        const lerpFactor = 0.35;
+        player.x += (canvasX - player.x) * lerpFactor;
+        player.y += (targetY - player.y) * lerpFactor;
+        
         return { ...s, player };
       });
     };
@@ -258,7 +345,7 @@ export function GameScreen({
       container.removeEventListener('touchstart', handleTouch);
       container.removeEventListener('touchmove', handleTouch);
     };
-  }, [isVisible, gameState.active, dimensions.height]);
+  }, [isVisible, gameState.active, gameState.phase, dimensions]);
 
   // Cleanup on unmount
   useEffect(() => {
@@ -294,9 +381,40 @@ export function GameScreen({
 
       {/* Game canvas */}
       {gameState.phase !== 'glitch' && (
-        <div className="relative">
+        <div 
+          className="relative"
+          style={{
+            transform: `translate(${gameState.screenShake.x}px, ${gameState.screenShake.y}px)`,
+          }}
+        >
           <GameCanvas state={gameState} dimensions={dimensions} />
-          <GameHUD state={gameState} onFireBomb={handleFireBomb} />
+          <GameHUD state={gameState} onFireBomb={handleFireBomb} onPause={togglePause} />
+        </div>
+      )}
+
+      {/* Pause overlay */}
+      {gameState.phase === 'paused' && (
+        <div className="absolute inset-0 flex items-center justify-center bg-black/70 z-50">
+          <div className="text-center">
+            <h2 className="text-4xl font-bold text-white mb-4" style={{ fontFamily: 'Orbitron, sans-serif' }}>
+              PAUSED
+            </h2>
+            <p className="text-white/60 mb-6">Press P to resume or ESC to quit</p>
+            <div className="flex gap-4 justify-center">
+              <button
+                onClick={togglePause}
+                className="px-6 py-3 bg-green-600 hover:bg-green-500 text-white rounded-lg font-bold transition-colors"
+              >
+                RESUME
+              </button>
+              <button
+                onClick={handleQuit}
+                className="px-6 py-3 bg-red-600 hover:bg-red-500 text-white rounded-lg font-bold transition-colors"
+              >
+                QUIT
+              </button>
+            </div>
+          </div>
         </div>
       )}
 
@@ -312,12 +430,13 @@ export function GameScreen({
         />
       )}
 
-      {/* ESC hint */}
+      {/* Controls hint */}
       {gameState.phase !== 'glitch' &&
         gameState.phase !== 'victory' &&
-        gameState.phase !== 'defeat' && (
+        gameState.phase !== 'defeat' &&
+        gameState.phase !== 'paused' && (
           <div className="absolute bottom-2 text-xs text-white/30">
-            ESC to quit
+            ESC to quit • P to pause
           </div>
         )}
     </div>

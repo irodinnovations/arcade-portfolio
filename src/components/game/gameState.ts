@@ -17,6 +17,10 @@ export function createInitialState(dimensions: GameDimensions): GameState {
     waveTimer: 45,
     glitchTimer: 0,
     lastTauntTime: 0,
+    particles: [],
+    hitPause: 0,
+    screenShake: { x: 0, y: 0, intensity: 0 },
+    previousPhase: null,
     player: {
       x: dimensions.width / 2,
       y: dimensions.height - 80,
@@ -29,6 +33,8 @@ export function createInitialState(dimensions: GameDimensions): GameState {
       shielded: false,
       fireRate: PLAYER_FIRE_RATE,
       lastShot: 0,
+      invincibleTimer: 0,
+      trail: [],
     },
     boss: {
       x: dimensions.width / 2,
@@ -41,6 +47,8 @@ export function createInitialState(dimensions: GameDimensions): GameState {
       speed: BOSS_SPEED,
       pattern: 0,
       patternTimer: 0,
+      hitFlash: 0,
+      enterProgress: 0,
     },
     bullets: [],
     enemies: [],

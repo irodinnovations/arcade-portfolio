@@ -3,7 +3,7 @@
 import { useState, useCallback, useRef } from 'react';
 import { StartScreen } from '@/components/screens/StartScreen';
 import { SelectScreen } from '@/components/screens/SelectScreen';
-import { GameScreenV2 } from '@/components/game/GameScreenV2';
+import { GameScreen } from '@/components/game/GameScreen';
 import { Background } from '@/components/effects/Background';
 import { CRTOverlay } from '@/components/effects/CRTOverlay';
 import { FlashOverlay } from '@/components/effects/FlashOverlay';
@@ -81,10 +81,12 @@ export function Portfolio() {
           onLaunch={handleLaunch}
         />
 
-        <GameScreenV2
+        <GameScreen
           isVisible={screen === 'game'}
           muted={muted}
+          playSound={play}
           onQuit={handleGameQuit}
+          onShake={triggerFlash}
         />
       </div>
     </ErrorBoundary>
