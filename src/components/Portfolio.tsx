@@ -57,6 +57,10 @@ export function Portfolio() {
     triggerFlash();
   }, [play, triggerFlash]);
 
+  const handleTick = useCallback(() => {
+    play('countdown');
+  }, [play]);
+
   return (
     <ErrorBoundary>
       <div
@@ -79,6 +83,7 @@ export function Portfolio() {
           onNavigate={handleNavigate}
           onSelect={handleSelect}
           onLaunch={handleLaunch}
+          onTick={handleTick}
         />
 
         {screen === 'game' && (

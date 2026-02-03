@@ -14,6 +14,7 @@ interface SelectScreenProps {
   onNavigate: () => void;
   onSelect: () => void;
   onLaunch: () => void;
+  onTick?: () => void;
   isVisible: boolean;
 }
 
@@ -22,6 +23,7 @@ export function SelectScreen({
   onNavigate,
   onSelect,
   onLaunch,
+  onTick,
   isVisible,
 }: SelectScreenProps) {
   const [selectedIndex, setSelectedIndex] = useState(0);
@@ -91,12 +93,17 @@ export function SelectScreen({
           // Don't reset - the game will start!
           return 0;
         }
-        return prev - 1;
+        const newValue = prev - 1;
+        // Play tick sound in warning zone (10 seconds and under)
+        if (newValue <= TIMER_WARNING_THRESHOLD && onTick) {
+          onTick();
+        }
+        return newValue;
       });
     }, 1000);
 
     return () => clearInterval(interval);
-  }, [isVisible, onTimerEnd]);
+  }, [isVisible, onTimerEnd, onTick]);
 
   // Reset timer when becoming visible again (e.g., returning from game)
   useEffect(() => {
