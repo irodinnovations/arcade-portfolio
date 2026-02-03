@@ -345,6 +345,13 @@ export function useGameLoop({
           // Boss attacks - MORE AGGRESSIVE when low health
           const attackChance = BOSS_ATTACK_CHANCE * rageMultiplier;
           if (Math.random() < attackChance) {
+            // Random taunt when attacking (15% chance)
+            if (Math.random() < 0.15) {
+              const taunts = ['coward', 'laugh', 'ideas', 'run', 'escape', 'see'] as const;
+              const taunt = taunts[Math.floor(Math.random() * taunts.length)];
+              if (taunt) playVoice(taunt);
+            }
+            
             // Spread shot
             const bulletCount = healthPercent < 0.5 ? 5 : 3;
             for (let i = 0; i < bulletCount; i++) {

@@ -304,46 +304,84 @@ export function GameScreen({
     };
   }, [isVisible, gameState.phase, gameState.active, handleFireBomb, handleQuit, handleGlitchComplete, togglePause]);
 
-  // Touch controls with SNAPPY response
+  // Touch controls - direct follow with offset for finger visibility
   useEffect(() => {
     if (!isVisible || !containerRef.current) return;
 
-    const handleTouch = (e: TouchEvent) => {
-      if (!gameState.active || gameState.phase === 'paused') return;
+    let touchActive = false;
+    let touchStartX = 0;
+    let touchStartY = 0;
+    let playerStartX = 0;
+    let playerStartY = 0;
+
+    const handleTouchStart = (e: TouchEvent) => {
+      if (!gameState.active || gameState.phase === 'paused' || gameState.phase === 'glitch') return;
+      
+      const touch = e.touches[0];
+      if (!touch) return;
+      
+      // Ignore touches on the bomb button area (bottom-right corner)
+      const rect = containerRef.current!.getBoundingClientRect();
+      const touchX = touch.clientX - rect.left;
+      const touchY = touch.clientY - rect.top;
+      if (touchX > rect.width - 80 && touchY > rect.height - 100) return;
+      
+      e.preventDefault();
+      touchActive = true;
+      touchStartX = touch.clientX;
+      touchStartY = touch.clientY;
+      
+      setGameState((s) => {
+        playerStartX = s.player.x;
+        playerStartY = s.player.y;
+        return s;
+      });
+    };
+
+    const handleTouchMove = (e: TouchEvent) => {
+      if (!touchActive || !gameState.active || gameState.phase === 'paused') return;
       e.preventDefault();
 
       const touch = e.touches[0];
       if (!touch) return;
-      const rect = containerRef.current!.getBoundingClientRect();
-      const touchX = touch.clientX - rect.left;
-      const touchY = touch.clientY - rect.top;
-
-      // Scale touch to canvas coordinates
-      const scaleX = dimensions.width / rect.width;
-      const scaleY = dimensions.height / rect.height;
-      const canvasX = touchX * scaleX;
-      const canvasY = touchY * scaleY;
-
+      
+      // Calculate delta from touch start
+      const deltaX = touch.clientX - touchStartX;
+      const deltaY = touch.clientY - touchStartY;
+      
+      // Scale movement (1.5x sensitivity for better control)
+      const sensitivity = 1.5;
+      
       setGameState((s) => {
         const player = { ...s.player };
-        const targetY = Math.max(dimensions.height * 0.5, canvasY);
         
-        // SNAPPY lerp - 0.35 is much more responsive than 0.15
-        const lerpFactor = 0.35;
-        player.x += (canvasX - player.x) * lerpFactor;
-        player.y += (targetY - player.y) * lerpFactor;
+        // Direct position update based on drag
+        player.x = playerStartX + deltaX * sensitivity;
+        player.y = playerStartY + deltaY * sensitivity;
+        
+        // Constrain to game area (bottom half)
+        player.x = Math.max(player.width / 2, Math.min(dimensions.width - player.width / 2, player.x));
+        player.y = Math.max(dimensions.height * 0.5, Math.min(dimensions.height - player.height / 2, player.y));
         
         return { ...s, player };
       });
     };
 
+    const handleTouchEnd = () => {
+      touchActive = false;
+    };
+
     const container = containerRef.current;
-    container.addEventListener('touchstart', handleTouch, { passive: false });
-    container.addEventListener('touchmove', handleTouch, { passive: false });
+    container.addEventListener('touchstart', handleTouchStart, { passive: false });
+    container.addEventListener('touchmove', handleTouchMove, { passive: false });
+    container.addEventListener('touchend', handleTouchEnd);
+    container.addEventListener('touchcancel', handleTouchEnd);
 
     return () => {
-      container.removeEventListener('touchstart', handleTouch);
-      container.removeEventListener('touchmove', handleTouch);
+      container.removeEventListener('touchstart', handleTouchStart);
+      container.removeEventListener('touchmove', handleTouchMove);
+      container.removeEventListener('touchend', handleTouchEnd);
+      container.removeEventListener('touchcancel', handleTouchEnd);
     };
   }, [isVisible, gameState.active, gameState.phase, dimensions]);
 

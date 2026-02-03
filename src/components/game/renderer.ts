@@ -117,7 +117,8 @@ export function drawPlayer(
   if (sprites.player.complete && sprites.player.naturalWidth > 0) {
     ctx.save();
     ctx.translate(player.x, player.y);
-    ctx.rotate(-Math.PI / 4);
+    // Rotate to point UP (sprite faces right by default, so -90°)
+    ctx.rotate(-Math.PI / 2);
 
     // Glow effect
     ctx.shadowColor = '#00ff88';

@@ -91,25 +91,37 @@ export function GameHUD({ state, onFireBomb, onPause }: GameHUDProps) {
         </div>
       </div>
 
-      {/* Fire bomb button - FIXED at bottom of screen */}
-      <div className="pointer-events-auto absolute bottom-4 left-1/2 z-20 -translate-x-1/2">
+      {/* Fire bomb button - bottom right corner, smaller */}
+      <div className="pointer-events-auto absolute bottom-3 right-3 z-20">
         <button
-          onClick={onFireBomb}
+          onTouchStart={(e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            if (canFireBomb) onFireBomb();
+          }}
+          onClick={(e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            if (canFireBomb) onFireBomb();
+          }}
           disabled={!canFireBomb}
           className={`
-            rounded-xl border-2 px-8 py-4 font-orbitron text-lg font-bold uppercase tracking-wider shadow-lg
-            transition-all duration-200 active:scale-95
+            flex h-14 w-14 items-center justify-center rounded-full border-2 text-xl font-bold shadow-lg
+            transition-all duration-100 active:scale-90
             ${
               canFireBomb
-                ? 'border-orange-500 bg-orange-600/90 text-white hover:bg-orange-500'
-                : 'border-gray-600 bg-gray-800/80 text-gray-400'
+                ? 'border-orange-400 bg-orange-600 text-white'
+                : 'border-gray-600 bg-gray-800/80 text-gray-500'
             }
           `}
+          aria-label={`Fire bomb (${player.bombs} remaining)`}
         >
-          {isBossPhase
-            ? `💣 FIRE BOMB (${player.bombs})`
-            : `💣 × ${player.bombs}`}
+          💣
         </button>
+        {/* Bomb count label */}
+        <div className="mt-1 text-center text-xs font-bold text-orange-400">
+          {player.bombs}
+        </div>
       </div>
     </>
   );
