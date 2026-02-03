@@ -1,0 +1,7 @@
+# robots.txt for rodneyjohn.com
+
+User-agent: *
+Allow: /
+
+# Sitemap
+Sitemap: https://rodneyjohn.com/sitemap.xml

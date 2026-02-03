@@ -1,0 +1,21 @@
+{
+  "name": "Rodney John | Portfolio",
+  "short_name": "RJ Portfolio",
+  "description": "Strategic Operations Leader with 10+ years driving performance. Builder, automation enthusiast, and innovation partner.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#050810",
+  "theme_color": "#00d4ff",
+  "icons": [
+    {
+      "src": "/android-chrome-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/android-chrome-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
