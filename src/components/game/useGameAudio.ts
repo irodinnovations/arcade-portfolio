@@ -35,15 +35,23 @@ export function useGameAudio({ muted }: UseGameAudioProps) {
   }, []);
 
   // Unlock audio on user interaction (required for mobile)
+  // We use volume=0 during unlock to prevent audible sound
   const unlockAudio = useCallback(() => {
     if (unlockedRef.current || !voicesRef.current) return;
     unlockedRef.current = true;
 
     Object.values(voicesRef.current).forEach((audio) => {
+      const originalVolume = audio.volume;
+      audio.volume = 0; // Silent unlock
       audio
         .play()
-        .then(() => audio.pause())
-        .catch(() => {});
+        .then(() => {
+          audio.pause();
+          audio.volume = originalVolume;
+        })
+        .catch(() => {
+          audio.volume = originalVolume;
+        });
       audio.currentTime = 0;
     });
   }, []);
