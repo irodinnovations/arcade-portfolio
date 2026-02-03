@@ -146,28 +146,25 @@ export function SelectScreen({
       <main
         id="main-content"
         tabIndex={-1}
-        className="flex min-h-0 flex-1 flex-col overflow-hidden px-4 py-4 md:px-8"
+        className="flex min-h-0 flex-1 flex-col overflow-hidden px-4 py-2 md:px-8 md:py-4"
       >
-        {/* Center stage - scrollable area */}
-        <div className="flex min-h-0 flex-1 flex-col items-center justify-start overflow-y-auto scrollbar-thin scrollbar-track-transparent scrollbar-thumb-cyan-900/50">
-          <div className="flex flex-shrink-0 items-center justify-center">
-            <MascotDisplay project={selectedProject} />
-          </div>
-
-          {/* Project info */}
-          <div className="mt-4 max-w-[600px] flex-shrink-0 pb-4 text-center">
-            <h2 className="mb-2 font-orbitron text-[clamp(1.5rem,4vw,2.5rem)] font-bold uppercase tracking-wider text-white [text-shadow:0_0_20px_rgba(0,212,255,0.5)]">
+        {/* Mobile: Info first, then mascot. Desktop: side by side or mascot then info */}
+        <div className="flex min-h-0 flex-1 flex-col items-center overflow-y-auto scrollbar-thin scrollbar-track-transparent scrollbar-thumb-cyan-900/50 md:flex-row md:justify-center md:gap-8">
+          
+          {/* Project info - shows first on mobile */}
+          <div className="order-1 w-full flex-shrink-0 px-2 text-center md:order-2 md:max-w-[400px] md:text-left">
+            <h2 className="mb-1 font-orbitron text-[clamp(1.2rem,4vw,2rem)] font-bold uppercase tracking-wider text-white [text-shadow:0_0_20px_rgba(0,212,255,0.5)]">
               {selectedProject.name}
             </h2>
 
             <Badge status={selectedProject.status} />
 
-            <p className="mb-4 mt-3 line-clamp-4 text-sm leading-relaxed text-[#5080b0] md:line-clamp-none md:text-base">
+            <p className="mb-3 mt-2 line-clamp-3 text-xs leading-relaxed text-[#5080b0] md:line-clamp-none md:text-sm">
               {selectedProject.description}
             </p>
 
             {/* Action buttons */}
-            <div className="flex flex-wrap justify-center gap-3">
+            <div className="mb-3 flex flex-wrap justify-center gap-2 md:justify-start md:gap-3">
               {selectedProject.isPersonal ? (
                 <>
                   <Button
@@ -201,6 +198,13 @@ export function SelectScreen({
                   Launch
                 </Button>
               )}
+            </div>
+          </div>
+
+          {/* Mascot - smaller on mobile, shows second */}
+          <div className="order-2 flex flex-shrink-0 items-center justify-center md:order-1">
+            <div className="scale-75 md:scale-100">
+              <MascotDisplay project={selectedProject} />
             </div>
           </div>
         </div>

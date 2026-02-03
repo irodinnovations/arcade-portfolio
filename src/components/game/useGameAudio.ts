@@ -56,7 +56,12 @@ export function useGameAudio({ muted }: UseGameAudioProps) {
     });
   }, []);
 
+  // Auto-unlock on mount (game only loads after user interaction)
+  // Plus listen for any additional interactions
   useEffect(() => {
+    // Unlock immediately since game only mounts after user interaction
+    unlockAudio();
+    
     document.addEventListener('touchstart', unlockAudio, { once: true });
     document.addEventListener('click', unlockAudio, { once: true });
 
