@@ -4,12 +4,15 @@ import { ButtonHTMLAttributes, forwardRef } from 'react';
 
 interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   variant?: 'primary' | 'secondary';
+  size?: 'sm' | 'md';
 }
 
 export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
-  function Button({ variant = 'primary', className = '', ...props }, ref) {
+  function Button({ variant = 'primary', size = 'md', className = '', ...props }, ref) {
     const baseClasses =
-      'px-6 py-2 font-rajdhani font-bold uppercase tracking-wider transition-all duration-200 rounded disabled:opacity-30 disabled:cursor-not-allowed focus:outline-none focus:ring-2 focus:ring-cyan-400 focus:ring-offset-2 focus:ring-offset-[#050810]';
+      'font-rajdhani font-bold uppercase tracking-wider transition-all duration-200 rounded disabled:opacity-30 disabled:cursor-not-allowed focus:outline-none focus:ring-2 focus:ring-cyan-400 focus:ring-offset-2 focus:ring-offset-[#050810]';
+
+    const sizeClasses = size === 'sm' ? 'px-4 py-1.5 text-sm' : 'px-6 py-2';
 
     const variantClasses =
       variant === 'primary'
@@ -19,7 +22,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
     return (
       <button
         ref={ref}
-        className={`${baseClasses} ${variantClasses} ${className}`}
+        className={`${baseClasses} ${sizeClasses} ${variantClasses} ${className}`}
         {...props}
       />
     );

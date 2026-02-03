@@ -146,65 +146,72 @@ export function SelectScreen({
       <main
         id="main-content"
         tabIndex={-1}
-        className="flex min-h-0 flex-1 flex-col overflow-hidden px-4 py-2 md:px-8 md:py-4"
+        className="flex min-h-0 flex-1 flex-col overflow-hidden px-3 py-2 md:px-8 md:py-4"
       >
-        {/* Mobile: Info first, then mascot. Desktop: side by side or mascot then info */}
-        <div className="flex min-h-0 flex-1 flex-col items-center overflow-y-auto scrollbar-thin scrollbar-track-transparent scrollbar-thumb-cyan-900/50 md:flex-row md:justify-center md:gap-8">
-          
-          {/* Project info - shows first on mobile */}
-          <div className="order-1 w-full flex-shrink-0 px-2 text-center md:order-2 md:max-w-[400px] md:text-left">
-            <h2 className="mb-1 font-orbitron text-[clamp(1.2rem,4vw,2rem)] font-bold uppercase tracking-wider text-white [text-shadow:0_0_20px_rgba(0,212,255,0.5)]">
-              {selectedProject.name}
-            </h2>
-
-            <Badge status={selectedProject.status} />
-
-            <p className="mb-3 mt-2 line-clamp-3 text-xs leading-relaxed text-[#5080b0] md:line-clamp-none md:text-sm">
-              {selectedProject.description}
-            </p>
-
-            {/* Action buttons */}
-            <div className="mb-3 flex flex-wrap justify-center gap-2 md:justify-start md:gap-3">
-              {selectedProject.isPersonal ? (
-                <>
-                  <Button
-                    onClick={() =>
-                      window.open('https://www.linkedin.com/in/rodney-john', '_blank')
-                    }
-                    variant="primary"
-                  >
-                    LinkedIn
-                  </Button>
-                  <Button
-                    onClick={() => {
-                      const contactSection = document.getElementById('contact-section');
-                      if (contactSection) {
-                        contactSection.scrollIntoView({ behavior: 'smooth' });
-                      } else {
-                        window.location.href = 'mailto:irodinnovations@gmail.com?subject=Let\'s Connect';
-                      }
-                    }}
-                    variant="secondary"
-                  >
-                    Connect
-                  </Button>
-                </>
-              ) : (
-                <Button
-                  onClick={handleLaunch}
-                  disabled={!selectedProject.url}
-                  variant="primary"
-                >
-                  Launch
-                </Button>
-              )}
+        {/* Project showcase: Avatar left, details right on mobile. Scrollable. */}
+        <div className="mb-2 min-h-0 flex-shrink overflow-y-auto rounded-lg border border-[#1a2545]/50 bg-[#0a1020]/50 p-3 scrollbar-thin scrollbar-track-transparent scrollbar-thumb-cyan-900/50 md:mb-4 md:p-4">
+          <div className="flex gap-3 md:flex-row md:items-start md:justify-center md:gap-8">
+            {/* Mascot - left side, smaller on mobile */}
+            <div className="flex-shrink-0">
+              <div className="h-[100px] w-[100px] overflow-hidden rounded-lg border border-cyan-500/30 md:h-[200px] md:w-[200px]">
+                <MascotDisplay project={selectedProject} compact />
+              </div>
             </div>
-          </div>
 
-          {/* Mascot - smaller on mobile, shows second */}
-          <div className="order-2 flex flex-shrink-0 items-center justify-center md:order-1">
-            <div className="scale-75 md:scale-100">
-              <MascotDisplay project={selectedProject} />
+            {/* Project info - right side */}
+            <div className="min-w-0 flex-1">
+              <h2 className="mb-1 font-orbitron text-base font-bold uppercase tracking-wider text-white [text-shadow:0_0_20px_rgba(0,212,255,0.5)] md:text-2xl">
+                {selectedProject.name}
+              </h2>
+
+              <Badge status={selectedProject.status} />
+
+              <p className="mb-2 mt-1 text-xs leading-relaxed text-[#5080b0] md:mt-2 md:text-sm">
+                {selectedProject.description}
+              </p>
+
+              {/* Action buttons - smaller on mobile */}
+              <div className="flex flex-wrap gap-2">
+                {selectedProject.isPersonal ? (
+                  <>
+                    <Button
+                      onClick={() =>
+                        window.open('https://www.linkedin.com/in/rodney-john', '_blank')
+                      }
+                      variant="primary"
+                      size="sm"
+                      className="md:px-6 md:py-2 md:text-base"
+                    >
+                      LinkedIn
+                    </Button>
+                    <Button
+                      onClick={() => {
+                        const contactSection = document.getElementById('contact-section');
+                        if (contactSection) {
+                          contactSection.scrollIntoView({ behavior: 'smooth' });
+                        } else {
+                          window.location.href = 'mailto:irodinnovations@gmail.com?subject=Let\'s Connect';
+                        }
+                      }}
+                      variant="secondary"
+                      size="sm"
+                      className="md:px-6 md:py-2 md:text-base"
+                    >
+                      Connect
+                    </Button>
+                  </>
+                ) : (
+                  <Button
+                    onClick={handleLaunch}
+                    disabled={!selectedProject.url}
+                    variant="primary"
+                    size="sm"
+                    className="md:px-6 md:py-2 md:text-base"
+                  >
+                    Launch
+                  </Button>
+                )}
+              </div>
             </div>
           </div>
         </div>

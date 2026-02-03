@@ -6,10 +6,25 @@ import { useReducedMotion } from '@/hooks/useReducedMotion';
 
 interface MascotDisplayProps {
   project: Project;
+  compact?: boolean;
 }
 
-export function MascotDisplay({ project }: MascotDisplayProps) {
+export function MascotDisplay({ project, compact = false }: MascotDisplayProps) {
   const reducedMotion = useReducedMotion();
+
+  // Compact mode: simple image fill for sidebar/thumbnail use
+  if (compact) {
+    return (
+      <div className="relative h-full w-full">
+        <Image
+          src={project.mascot}
+          alt={project.name}
+          fill
+          className="object-cover object-top"
+        />
+      </div>
+    );
+  }
 
   return (
     <div className="relative flex h-[200px] w-full max-w-[500px] items-center justify-center sm:h-[250px] md:h-[300px] lg:h-[350px]">
