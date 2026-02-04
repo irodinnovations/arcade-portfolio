@@ -10,6 +10,9 @@ interface Sprites {
   explosion?: HTMLImageElement;
   bulletPlayer?: HTMLImageElement;
   bulletEnemy?: HTMLImageElement;
+  enemyWorker?: HTMLImageElement;
+  enemyShooter?: HTMLImageElement;
+  enemyCarrier?: HTMLImageElement;
 }
 
 // Star field for parallax scrolling
@@ -281,7 +284,7 @@ export function drawBoss(
 /**
  * Draw an enemy with hit effects
  */
-export function drawEnemy(ctx: CanvasRenderingContext2D, enemy: Enemy): void {
+export function drawEnemy(ctx: CanvasRenderingContext2D, enemy: Enemy, sprites?: Sprites): void {
   const { x, y, width, type, hitFlash } = enemy;
 
   const colors: Record<string, { main: string; glow: string }> = {
@@ -291,58 +294,91 @@ export function drawEnemy(ctx: CanvasRenderingContext2D, enemy: Enemy): void {
   };
   const color = colors[type] ?? colors.worker!;
 
+  // Get the appropriate sprite for this enemy type
+  const spriteMap: Record<string, HTMLImageElement | undefined> = {
+    worker: sprites?.enemyWorker,
+    shooter: sprites?.enemyShooter,
+    carrier: sprites?.enemyCarrier,
+  };
+  const sprite = spriteMap[type];
+
   ctx.save();
   ctx.shadowColor = color!.glow;
   ctx.shadowBlur = hitFlash > 0 ? 25 : 12;
 
-  // Hit flash
+  // Hit flash - overlay white
   if (hitFlash > 0) {
-    ctx.fillStyle = '#ffffff';
-  } else {
-    ctx.fillStyle = color.main;
+    ctx.globalAlpha = 0.5 + (hitFlash / 200) * 0.5;
   }
 
-  // Body
-  ctx.beginPath();
-  ctx.arc(x, y, width / 2, 0, Math.PI * 2);
-  ctx.fill();
+  // Draw sprite if available, otherwise fallback to circle
+  if (sprite?.complete && sprite?.naturalWidth > 0) {
+    // Scale up the sprite size for better visibility (enemies are small in-game)
+    const spriteSize = width * 1.8;
+    ctx.drawImage(
+      sprite,
+      x - spriteSize / 2,
+      y - spriteSize / 2,
+      spriteSize,
+      spriteSize
+    );
 
-  // Inner glow
-  const innerGradient = ctx.createRadialGradient(x, y - 3, 0, x, y, width / 2);
-  innerGradient.addColorStop(0, 'rgba(255, 255, 255, 0.4)');
-  innerGradient.addColorStop(1, 'transparent');
-  ctx.fillStyle = innerGradient;
-  ctx.fill();
+    // Hit flash white overlay
+    if (hitFlash > 0) {
+      ctx.globalCompositeOperation = 'source-atop';
+      ctx.fillStyle = `rgba(255, 255, 255, ${hitFlash / 150})`;
+      ctx.fillRect(x - spriteSize / 2, y - spriteSize / 2, spriteSize, spriteSize);
+      ctx.globalCompositeOperation = 'source-over';
+    }
+  } else {
+    // Fallback: draw colored circle (old style)
+    if (hitFlash > 0) {
+      ctx.fillStyle = '#ffffff';
+    } else {
+      ctx.fillStyle = color.main;
+    }
 
-  ctx.shadowBlur = 0;
-
-  // Eyes
-  ctx.fillStyle = '#000000';
-  ctx.beginPath();
-  ctx.arc(x - 5, y - 2, 3, 0, Math.PI * 2);
-  ctx.arc(x + 5, y - 2, 3, 0, Math.PI * 2);
-  ctx.fill();
-
-  // Eye shine
-  ctx.fillStyle = 'rgba(255, 255, 255, 0.8)';
-  ctx.beginPath();
-  ctx.arc(x - 4, y - 3, 1, 0, Math.PI * 2);
-  ctx.arc(x + 6, y - 3, 1, 0, Math.PI * 2);
-  ctx.fill();
-
-  // Type indicators
-  if (type === 'shooter') {
-    ctx.strokeStyle = '#000';
-    ctx.lineWidth = 2;
     ctx.beginPath();
-    ctx.moveTo(x - 8, y - 7);
-    ctx.lineTo(x - 3, y - 5);
-    ctx.moveTo(x + 8, y - 7);
-    ctx.lineTo(x + 3, y - 5);
-    ctx.stroke();
-  } else if (type === 'carrier') {
-    ctx.fillStyle = 'rgba(0, 0, 0, 0.3)';
-    ctx.fillRect(x - 6, y + 4, 12, 6);
+    ctx.arc(x, y, width / 2, 0, Math.PI * 2);
+    ctx.fill();
+
+    // Inner glow
+    const innerGradient = ctx.createRadialGradient(x, y - 3, 0, x, y, width / 2);
+    innerGradient.addColorStop(0, 'rgba(255, 255, 255, 0.4)');
+    innerGradient.addColorStop(1, 'transparent');
+    ctx.fillStyle = innerGradient;
+    ctx.fill();
+
+    ctx.shadowBlur = 0;
+
+    // Eyes
+    ctx.fillStyle = '#000000';
+    ctx.beginPath();
+    ctx.arc(x - 5, y - 2, 3, 0, Math.PI * 2);
+    ctx.arc(x + 5, y - 2, 3, 0, Math.PI * 2);
+    ctx.fill();
+
+    // Eye shine
+    ctx.fillStyle = 'rgba(255, 255, 255, 0.8)';
+    ctx.beginPath();
+    ctx.arc(x - 4, y - 3, 1, 0, Math.PI * 2);
+    ctx.arc(x + 6, y - 3, 1, 0, Math.PI * 2);
+    ctx.fill();
+
+    // Type indicators
+    if (type === 'shooter') {
+      ctx.strokeStyle = '#000';
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.moveTo(x - 8, y - 7);
+      ctx.lineTo(x - 3, y - 5);
+      ctx.moveTo(x + 8, y - 7);
+      ctx.lineTo(x + 3, y - 5);
+      ctx.stroke();
+    } else if (type === 'carrier') {
+      ctx.fillStyle = 'rgba(0, 0, 0, 0.3)';
+      ctx.fillRect(x - 6, y + 4, 12, 6);
+    }
   }
 
   ctx.restore();

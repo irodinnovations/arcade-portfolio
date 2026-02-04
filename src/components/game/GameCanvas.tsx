@@ -26,6 +26,9 @@ interface Sprites {
   health: HTMLImageElement;
   shield: HTMLImageElement;
   explosion: HTMLImageElement;
+  enemyWorker: HTMLImageElement;
+  enemyShooter: HTMLImageElement;
+  enemyCarrier: HTMLImageElement;
 }
 
 export function GameCanvas({ state, dimensions }: GameCanvasProps) {
@@ -43,6 +46,9 @@ export function GameCanvas({ state, dimensions }: GameCanvasProps) {
       health: new Image(),
       shield: new Image(),
       explosion: new Image(),
+      enemyWorker: new Image(),
+      enemyShooter: new Image(),
+      enemyCarrier: new Image(),
     };
 
     sprites.player.src = '/images/game/player-ship.png';
@@ -52,6 +58,9 @@ export function GameCanvas({ state, dimensions }: GameCanvasProps) {
     sprites.health.src = '/images/game/health-pickup.png';
     sprites.shield.src = '/images/game/shield-pickup.png';
     sprites.explosion.src = '/images/game/explosion-sprite.png';
+    sprites.enemyWorker.src = '/images/game/enemy-worker.png';
+    sprites.enemyShooter.src = '/images/game/enemy-shooter.png';
+    sprites.enemyCarrier.src = '/images/game/enemy-carrier.png';
 
     spritesRef.current = sprites;
   }, []);
@@ -77,7 +86,7 @@ export function GameCanvas({ state, dimensions }: GameCanvasProps) {
 
     // Draw enemies
     for (const enemy of state.enemies) {
-      drawEnemy(ctx, enemy);
+      drawEnemy(ctx, enemy, sprites);
     }
 
     // Draw player bullets
