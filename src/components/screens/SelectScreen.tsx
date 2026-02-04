@@ -148,30 +148,31 @@ export function SelectScreen({
         tabIndex={-1}
         className="flex min-h-0 flex-1 flex-col overflow-hidden px-3 py-2 md:px-8 md:py-4"
       >
-        {/* Project showcase: Avatar left, details right on mobile. Scrollable. */}
+        {/* Project showcase: Side-by-side on mobile, stacked/centered on desktop */}
         <div className="mb-2 min-h-0 flex-shrink overflow-y-auto rounded-lg border border-[#1a2545]/50 bg-[#0a1020]/50 p-3 scrollbar-thin scrollbar-track-transparent scrollbar-thumb-cyan-900/50 md:mb-4 md:p-4">
-          <div className="flex gap-3 md:flex-row md:items-start md:justify-center md:gap-8">
-            {/* Mascot - left side, smaller on mobile */}
+          {/* Mobile: flex-row (side by side), Desktop: flex-col (stacked, centered) */}
+          <div className="flex flex-row gap-3 md:flex-col md:items-center md:gap-4">
+            {/* Mascot - left on mobile, centered on desktop */}
             <div className="flex-shrink-0">
               <div className="h-[100px] w-[100px] overflow-hidden rounded-lg border border-cyan-500/30 md:h-[200px] md:w-[200px]">
                 <MascotDisplay project={selectedProject} compact />
               </div>
             </div>
 
-            {/* Project info - right side */}
-            <div className="min-w-0 flex-1">
+            {/* Project info - right on mobile, below and centered on desktop */}
+            <div className="min-w-0 flex-1 md:flex-none md:text-center">
               <h2 className="mb-1 font-orbitron text-base font-bold uppercase tracking-wider text-white [text-shadow:0_0_20px_rgba(0,212,255,0.5)] md:text-2xl">
                 {selectedProject.name}
               </h2>
 
               <Badge status={selectedProject.status} />
 
-              <p className="mb-2 mt-1 text-xs leading-relaxed text-[#5080b0] md:mt-2 md:text-sm">
+              <p className="mb-2 mt-1 text-xs leading-relaxed text-[#5080b0] md:mx-auto md:mt-2 md:max-w-2xl md:text-sm">
                 {selectedProject.description}
               </p>
 
-              {/* Action buttons - smaller on mobile */}
-              <div className="flex flex-wrap gap-2">
+              {/* Action buttons - smaller on mobile, centered on desktop */}
+              <div className="flex flex-wrap gap-2 md:justify-center">
                 {selectedProject.isPersonal ? (
                   <>
                     <Button
