@@ -45,8 +45,8 @@ export function GameCanvas({ state, dimensions }: GameCanvasProps) {
       explosion: new Image(),
     };
 
-    sprites.player.src = '/images/game/player-ship.webp';
-    sprites.boss.src = '/images/game/boss-rodney.webp';
+    sprites.player.src = '/images/game/player-ship.png';
+    sprites.boss.src = '/images/game/boss-rodney.png';
     sprites.background.src = '/images/game/background.webp';
     sprites.bomb.src = '/images/game/bomb-pickup.png';
     sprites.health.src = '/images/game/health-pickup.png';

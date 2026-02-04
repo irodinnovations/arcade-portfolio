@@ -113,21 +113,17 @@ export function drawPlayer(
   ctx.arc(player.x, player.y + player.height / 2 + 8, exhaustSize, 0, Math.PI * 2);
   ctx.fill();
 
-  // Ship sprite
+  // Ship sprite - already oriented pointing UP, no rotation needed
   if (sprites.player.complete && sprites.player.naturalWidth > 0) {
     ctx.save();
-    ctx.translate(player.x, player.y);
-    // Rotate to point UP (sprite faces right by default, so -90°)
-    ctx.rotate(-Math.PI / 2);
-
     // Glow effect
-    ctx.shadowColor = '#00ff88';
-    ctx.shadowBlur = 15;
+    ctx.shadowColor = '#00ffcc';
+    ctx.shadowBlur = 20;
     
     ctx.drawImage(
       sprites.player,
-      -player.width / 2,
-      -player.height / 2,
+      player.x - player.width / 2,
+      player.y - player.height / 2,
       player.width,
       player.height
     );
