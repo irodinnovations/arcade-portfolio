@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { GLITCH_SYMBOLS, GLITCH_PHASE_1, GLITCH_PHASE_2, GLITCH_DURATION } from './constants';
 
 interface GlitchOverlayProps {
@@ -9,6 +9,7 @@ interface GlitchOverlayProps {
   playSound: (type: 'navigate' | 'countdown' | 'launch') => void;
   playVoice: (name: string) => void;
   onShake: () => void;
+  onUnlockAudio?: () => void;
 }
 
 export function GlitchOverlay({
@@ -17,16 +18,33 @@ export function GlitchOverlay({
   playSound,
   playVoice,
   onShake,
+  onUnlockAudio,
 }: GlitchOverlayProps) {
   const [text, setText] = useState('');
-  const [phase, setPhase] = useState<'glitch' | 'warning' | 'reveal' | 'done'>('glitch');
+  const [phase, setPhase] = useState<'tap' | 'glitch' | 'warning' | 'reveal' | 'done'>('tap');
+  const [started, setStarted] = useState(false);
+
+  // Handle tap to start (required for iOS audio)
+  const handleTapToStart = useCallback(() => {
+    if (phase !== 'tap') return;
+    
+    // Unlock audio on direct user gesture (iOS requirement)
+    onUnlockAudio?.();
+    
+    setStarted(true);
+    setPhase('glitch');
+  }, [phase, onUnlockAudio]);
 
   useEffect(() => {
     if (!active) {
-      setPhase('glitch');
+      setPhase('tap');
+      setStarted(false);
       setText('');
       return;
     }
+    
+    // Wait for user tap before starting sequence
+    if (!started) return;
 
     // Phase 1: Random glitch symbols (0-3s)
     const glitchInterval = setInterval(() => {
@@ -66,9 +84,29 @@ export function GlitchOverlay({
       clearTimeout(revealTimer);
       clearTimeout(completeTimer);
     };
-  }, [active, onComplete, playSound, playVoice, onShake]);
+  }, [active, started, onComplete, playSound, playVoice, onShake]);
 
   if (!active || phase === 'done') return null;
+
+  // Tap to start screen (required for iOS audio unlock)
+  if (phase === 'tap') {
+    return (
+      <div
+        className="fixed inset-0 z-50 flex cursor-pointer flex-col items-center justify-center bg-black/95"
+        onClick={handleTapToStart}
+        onTouchStart={handleTapToStart}
+      >
+        <div className="animate-pulse text-center">
+          <p className="mb-4 font-orbitron text-2xl font-bold text-cyan-400 md:text-4xl">
+            ⚠️ SYSTEM BREACH DETECTED
+          </p>
+          <p className="font-rajdhani text-lg text-white/70 md:text-xl">
+            Tap anywhere to engage
+          </p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div
