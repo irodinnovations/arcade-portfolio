@@ -18,7 +18,7 @@ export const projects: Project[] = [
     mascot: '/images/mascots/rodney-final.webp',
     status: 'live',
     description:
-      "Operations Performance Manager with 10+ years building robust reporting systems that empower teams to trust their data and act on it. I specialize in KPI frameworks, automated reporting, and data standardization across multi-site operations.",
+      "I'm an Ops Performance Manager with a strong background in building dashboards, analytics tools, and reporting systems — now focused on creating AI-driven products. Self-taught, product-focused, and always shipping. Like what you see? Let's talk.",
     url: 'https://www.linkedin.com/in/rodney-john',
     github: null,
     isPersonal: true,
@@ -29,7 +29,7 @@ export const projects: Project[] = [
     mascot: '/images/mascots/mascot-vibe.webp',
     status: 'live',
     description:
-      'Building software without a CS degree. Practical tutorials and real project breakdowns for non-developers turning ideas into working tools with AI. Because you don\'t need to code to create.',
+      "A real-world look at how I went from ops and reporting systems to building AI-powered products — without a developer background. VCD isn't a \"learn to code\" series. It's about solving real problems, making smart trade-offs, and shipping useful software. Built for operators, analysts, and business-minded builders who want to create without mastering every line of code. This is what it looks like when business insight meets just enough tech to build.",
     url: 'https://vibecodersdispatch.substack.com',
     github: null,
   },
