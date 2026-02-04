@@ -32,5 +32,5 @@ export const siteConfig = {
 } as const;
 
 // Timer settings
-export const TIMER_DURATION = 45;
+export const TIMER_DURATION = 99;
 export const TIMER_WARNING_THRESHOLD = 10;

@@ -47,7 +47,7 @@ export function GameScreen({
     createInitialState(dimensions)
   );
 
-  const { playVoice, unlockAudio } = useGameAudio({ muted });
+  const { playVoice, unlockAudio, playDialup, stopDialup } = useGameAudio({ muted });
 
   // Responsive canvas dimensions - scale to viewport properly
   useEffect(() => {
@@ -421,6 +421,8 @@ export function GameScreen({
         playVoice={playVoice}
         onShake={onShake}
         onUnlockAudio={unlockAudio}
+        playDialup={playDialup}
+        stopDialup={stopDialup}
       />
 
       {/* Game canvas */}

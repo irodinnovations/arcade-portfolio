@@ -10,6 +10,8 @@ interface GlitchOverlayProps {
   playVoice: (name: string, priority?: boolean) => void;
   onShake: () => void;
   onUnlockAudio?: () => void;
+  playDialup?: () => void;
+  stopDialup?: () => void;
 }
 
 export function GlitchOverlay({
@@ -19,6 +21,8 @@ export function GlitchOverlay({
   playVoice,
   onShake,
   onUnlockAudio,
+  playDialup,
+  stopDialup,
 }: GlitchOverlayProps) {
   const [text, setText] = useState('');
   const [phase, setPhase] = useState<'tap' | 'glitch' | 'warning' | 'reveal' | 'done'>('tap');
@@ -31,15 +35,19 @@ export function GlitchOverlay({
     // Unlock audio on direct user gesture (iOS requirement)
     onUnlockAudio?.();
     
+    // Start dialup sound
+    playDialup?.();
+    
     setStarted(true);
     setPhase('glitch');
-  }, [phase, onUnlockAudio]);
+  }, [phase, onUnlockAudio, playDialup]);
 
   useEffect(() => {
     if (!active) {
       setPhase('tap');
       setStarted(false);
       setText('');
+      stopDialup?.(); // Stop dialup when glitch becomes inactive
       return;
     }
     
@@ -75,6 +83,7 @@ export function GlitchOverlay({
     // Complete
     const completeTimer = setTimeout(() => {
       setPhase('done');
+      stopDialup?.(); // Stop dialup when glitch completes
       onComplete();
     }, GLITCH_DURATION);
 
@@ -83,8 +92,9 @@ export function GlitchOverlay({
       clearTimeout(warningTimer);
       clearTimeout(revealTimer);
       clearTimeout(completeTimer);
+      stopDialup?.(); // Stop dialup on cleanup
     };
-  }, [active, started, onComplete, playSound, playVoice, onShake]);
+  }, [active, started, onComplete, playSound, playVoice, onShake, stopDialup]);
 
   if (!active || phase === 'done') return null;
 

@@ -13,6 +13,7 @@ const MAX_COOLDOWN = 6000;
 
 export function useGameAudio({ muted }: UseGameAudioProps) {
   const voicesRef = useRef<Record<VoiceType, HTMLAudioElement> | null>(null);
+  const dialupRef = useRef<HTMLAudioElement | null>(null);
   const unlockedRef = useRef(false);
   const readyRef = useRef(false);
   const lastVoiceTimeRef = useRef(0);
@@ -32,6 +33,13 @@ export function useGameAudio({ muted }: UseGameAudioProps) {
       laugh: new Audio('/audio/voice-laugh.mp3'),
     };
 
+    // Initialize dialup sound
+    const dialup = new Audio('/audio/dialup.ogg');
+    dialup.preload = 'auto';
+    dialup.loop = false;
+    dialup.load();
+    dialupRef.current = dialup;
+
     // Preload all audio
     Object.values(voices).forEach((audio) => {
       audio.preload = 'auto';
@@ -43,12 +51,12 @@ export function useGameAudio({ muted }: UseGameAudioProps) {
     
     // Try to unlock now that voices are ready
     if (!unlockedRef.current) {
-      unlockAudioInternal(voices);
+      unlockAudioInternal(voices, dialup);
     }
   }, []);
 
   // Internal unlock function that takes voices directly
-  const unlockAudioInternal = useCallback((voices: Record<VoiceType, HTMLAudioElement>) => {
+  const unlockAudioInternal = useCallback((voices: Record<VoiceType, HTMLAudioElement>, dialup?: HTMLAudioElement) => {
     if (unlockedRef.current) return;
     unlockedRef.current = true;
 
@@ -67,13 +75,57 @@ export function useGameAudio({ muted }: UseGameAudioProps) {
           audio.volume = originalVolume;
         });
     });
+
+    // Also unlock dialup audio
+    if (dialup) {
+      const originalVolume = dialup.volume;
+      dialup.volume = 0;
+      dialup
+        .play()
+        .then(() => {
+          dialup.pause();
+          dialup.currentTime = 0;
+          dialup.volume = originalVolume;
+        })
+        .catch(() => {
+          dialup.currentTime = 0;
+          dialup.volume = originalVolume;
+        });
+    }
   }, []);
 
   // Public unlock function
   const unlockAudio = useCallback(() => {
     if (!readyRef.current || !voicesRef.current) return;
-    unlockAudioInternal(voicesRef.current);
+    unlockAudioInternal(voicesRef.current, dialupRef.current || undefined);
   }, [unlockAudioInternal]);
+
+  // Play dialup sound
+  const playDialup = useCallback(() => {
+    if (muted || !dialupRef.current) return;
+    
+    try {
+      dialupRef.current.currentTime = 0;
+      dialupRef.current.volume = 0.7;
+      dialupRef.current.play().catch(() => {
+        // Silently handle - audio might not be unlocked yet
+      });
+    } catch {
+      // Silently handle errors
+    }
+  }, [muted]);
+
+  // Stop dialup sound
+  const stopDialup = useCallback(() => {
+    if (!dialupRef.current) return;
+    
+    try {
+      dialupRef.current.pause();
+      dialupRef.current.currentTime = 0;
+    } catch {
+      // Silently handle errors
+    }
+  }, []);
 
   // Listen for user interactions to unlock
   useEffect(() => {
@@ -140,5 +192,5 @@ export function useGameAudio({ muted }: UseGameAudioProps) {
     [muted, unlockAudio]
   );
 
-  return { playVoice, unlockAudio };
+  return { playVoice, unlockAudio, playDialup, stopDialup };
 }
