@@ -39,7 +39,7 @@ export const projects: Project[] = [
     mascot: '/images/mascots/mascot-arcade.webp',
     status: 'live',
     description:
-      "You're looking at it! A Virtua Fighter-inspired portfolio that proves professional can still be fun. Built with Next.js, TypeScript, and a passion for 90s arcade aesthetics.",
+      "You're looking at it. A game-inspired portfolio disguised as a character select screen, built with AI, stubbornness, and a love for 90s arcade aesthetics. Part professional portfolio, part arcade tribute, part experiment — it's proof that serious work doesn't have to be boring. There's also a hidden easter egg. Found it yet?",
     url: null,
     github: null,
   },
