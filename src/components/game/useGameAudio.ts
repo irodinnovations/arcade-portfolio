@@ -10,6 +10,7 @@ interface UseGameAudioProps {
 export function useGameAudio({ muted }: UseGameAudioProps) {
   const voicesRef = useRef<Record<VoiceType, HTMLAudioElement> | null>(null);
   const unlockedRef = useRef(false);
+  const readyRef = useRef(false);
 
   // Initialize audio elements
   useEffect(() => {
@@ -32,42 +33,52 @@ export function useGameAudio({ muted }: UseGameAudioProps) {
     });
 
     voicesRef.current = voices;
+    readyRef.current = true;
+    
+    // Try to unlock now that voices are ready
+    if (!unlockedRef.current) {
+      unlockAudioInternal(voices);
+    }
   }, []);
 
-  // Unlock audio on user interaction (required for mobile)
-  // We use volume=0 during unlock to prevent audible sound
-  const unlockAudio = useCallback(() => {
-    if (unlockedRef.current || !voicesRef.current) return;
+  // Internal unlock function that takes voices directly
+  const unlockAudioInternal = useCallback((voices: Record<VoiceType, HTMLAudioElement>) => {
+    if (unlockedRef.current) return;
     unlockedRef.current = true;
 
-    Object.values(voicesRef.current).forEach((audio) => {
+    Object.values(voices).forEach((audio) => {
       const originalVolume = audio.volume;
       audio.volume = 0; // Silent unlock
       audio
         .play()
         .then(() => {
           audio.pause();
+          audio.currentTime = 0;
           audio.volume = originalVolume;
         })
         .catch(() => {
+          audio.currentTime = 0;
           audio.volume = originalVolume;
         });
-      audio.currentTime = 0;
     });
   }, []);
 
-  // Auto-unlock on mount (game only loads after user interaction)
-  // Plus listen for any additional interactions
+  // Public unlock function
+  const unlockAudio = useCallback(() => {
+    if (!readyRef.current || !voicesRef.current) return;
+    unlockAudioInternal(voicesRef.current);
+  }, [unlockAudioInternal]);
+
+  // Listen for user interactions to unlock
   useEffect(() => {
-    // Unlock immediately since game only mounts after user interaction
-    unlockAudio();
+    const handler = () => unlockAudio();
     
-    document.addEventListener('touchstart', unlockAudio, { once: true });
-    document.addEventListener('click', unlockAudio, { once: true });
+    document.addEventListener('touchstart', handler, { once: true });
+    document.addEventListener('click', handler, { once: true });
 
     return () => {
-      document.removeEventListener('touchstart', unlockAudio);
-      document.removeEventListener('click', unlockAudio);
+      document.removeEventListener('touchstart', handler);
+      document.removeEventListener('click', handler);
     };
   }, [unlockAudio]);
 
@@ -75,19 +86,32 @@ export function useGameAudio({ muted }: UseGameAudioProps) {
     (name: VoiceType | string) => {
       if (muted || !voicesRef.current) return;
 
+      // Try to unlock if not already (handles edge cases)
+      if (!unlockedRef.current) {
+        unlockAudio();
+      }
+
       try {
         const audio = voicesRef.current[name as VoiceType];
         if (audio) {
+          // Stop any currently playing instance of this voice
+          audio.pause();
           audio.currentTime = 0;
           audio.playbackRate = 1.0;
           audio.volume = 0.9;
-          audio.play().catch((e) => console.log('Audio play failed:', e));
+          
+          const playPromise = audio.play();
+          if (playPromise) {
+            playPromise.catch(() => {
+              // Silently handle - audio might not be unlocked yet
+            });
+          }
         }
-      } catch (e) {
-        console.log('Voice error:', e);
+      } catch {
+        // Silently handle errors
       }
     },
-    [muted]
+    [muted, unlockAudio]
   );
 
   return { playVoice, unlockAudio };

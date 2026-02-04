@@ -32,6 +32,11 @@ export function GameScreen({
   const containerRef = useRef<HTMLDivElement>(null);
   const waveTimerRef = useRef<NodeJS.Timeout | null>(null);
   const enemySpawnRef = useRef<NodeJS.Timeout | null>(null);
+  
+  // Touch control refs - persist across renders
+  const touchActiveRef = useRef(false);
+  const touchStartRef = useRef({ x: 0, y: 0 });
+  const playerStartRef = useRef({ x: 0, y: 0 });
 
   const [dimensions, setDimensions] = useState<GameDimensions>({
     width: 600,
@@ -228,10 +233,16 @@ export function GameScreen({
     });
   }, [playSound, playVoice]);
 
-  // Retry game
+  // Retry game - skip glitch, go straight to wave phase
   const handleRetry = useCallback(() => {
-    setGameState(createInitialState(dimensions));
-  }, [dimensions]);
+    // Clear any existing timers first
+    waveTimerRef.current && clearInterval(waveTimerRef.current);
+    enemySpawnRef.current && clearInterval(enemySpawnRef.current);
+    stopLoop();
+    
+    // Start wave phase directly (it handles state reset internally)
+    startWavePhase();
+  }, [startWavePhase, stopLoop]);
 
   // Quit game
   const handleQuit = useCallback(() => {
@@ -304,19 +315,11 @@ export function GameScreen({
     };
   }, [isVisible, gameState.phase, gameState.active, handleFireBomb, handleQuit, handleGlitchComplete, togglePause]);
 
-  // Touch controls - direct follow with offset for finger visibility
+  // Touch controls - using refs to persist state across renders
   useEffect(() => {
     if (!isVisible || !containerRef.current) return;
 
-    let touchActive = false;
-    let touchStartX = 0;
-    let touchStartY = 0;
-    let playerStartX = 0;
-    let playerStartY = 0;
-
     const handleTouchStart = (e: TouchEvent) => {
-      if (!gameState.active || gameState.phase === 'paused' || gameState.phase === 'glitch') return;
-      
       const touch = e.touches[0];
       if (!touch) return;
       
@@ -327,37 +330,39 @@ export function GameScreen({
       if (touchX > rect.width - 80 && touchY > rect.height - 100) return;
       
       e.preventDefault();
-      touchActive = true;
-      touchStartX = touch.clientX;
-      touchStartY = touch.clientY;
+      touchActiveRef.current = true;
+      touchStartRef.current = { x: touch.clientX, y: touch.clientY };
       
+      // Capture current player position
       setGameState((s) => {
-        playerStartX = s.player.x;
-        playerStartY = s.player.y;
+        playerStartRef.current = { x: s.player.x, y: s.player.y };
         return s;
       });
     };
 
     const handleTouchMove = (e: TouchEvent) => {
-      if (!touchActive || !gameState.active || gameState.phase === 'paused') return;
+      if (!touchActiveRef.current) return;
       e.preventDefault();
 
       const touch = e.touches[0];
       if (!touch) return;
       
       // Calculate delta from touch start
-      const deltaX = touch.clientX - touchStartX;
-      const deltaY = touch.clientY - touchStartY;
+      const deltaX = touch.clientX - touchStartRef.current.x;
+      const deltaY = touch.clientY - touchStartRef.current.y;
       
       // Scale movement (1.5x sensitivity for better control)
       const sensitivity = 1.5;
       
       setGameState((s) => {
+        // Skip if game not active or paused
+        if (!s.active || s.phase === 'paused' || s.phase === 'glitch') return s;
+        
         const player = { ...s.player };
         
         // Direct position update based on drag
-        player.x = playerStartX + deltaX * sensitivity;
-        player.y = playerStartY + deltaY * sensitivity;
+        player.x = playerStartRef.current.x + deltaX * sensitivity;
+        player.y = playerStartRef.current.y + deltaY * sensitivity;
         
         // Constrain to game area (bottom half)
         player.x = Math.max(player.width / 2, Math.min(dimensions.width - player.width / 2, player.x));
@@ -368,7 +373,7 @@ export function GameScreen({
     };
 
     const handleTouchEnd = () => {
-      touchActive = false;
+      touchActiveRef.current = false;
     };
 
     const container = containerRef.current;
@@ -383,7 +388,7 @@ export function GameScreen({
       container.removeEventListener('touchend', handleTouchEnd);
       container.removeEventListener('touchcancel', handleTouchEnd);
     };
-  }, [isVisible, gameState.active, gameState.phase, dimensions]);
+  }, [isVisible, dimensions]);
 
   // Cleanup on unmount
   useEffect(() => {
