@@ -27,7 +27,7 @@ export const siteConfig = {
   description:
     'Strategic Operations Leader with 10+ years driving performance. Builder, automation enthusiast, and innovation partner.',
   url: 'https://rodneyjohn.com',
-  ogImage: '/images/rj-logo.png',
+  ogImage: '/images/og-image.png',
   twitterHandle: '@rodneyjohn',
 } as const;
 
