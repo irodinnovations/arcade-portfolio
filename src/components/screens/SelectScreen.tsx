@@ -271,6 +271,9 @@ export function SelectScreen({
           </a>
         </div>
         <div className="opacity-50">rodneyjohn.com</div>
+        <div className="mt-2 font-orbitron text-[0.7rem] tracking-[0.3em] text-amber-400/70">
+          FREE PLAY
+        </div>
       </footer>
     </div>
   );

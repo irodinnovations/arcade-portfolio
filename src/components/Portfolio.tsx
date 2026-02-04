@@ -5,6 +5,7 @@ import { StartScreen } from '@/components/screens/StartScreen';
 import { SelectScreen } from '@/components/screens/SelectScreen';
 import { GameScreen } from '@/components/game/GameScreen';
 import { Background } from '@/components/effects/Background';
+import { BackgroundParticles } from '@/components/effects/BackgroundParticles';
 import { CRTOverlay } from '@/components/effects/CRTOverlay';
 import { FlashOverlay } from '@/components/effects/FlashOverlay';
 import { SoundToggle } from '@/components/ui';
@@ -68,6 +69,7 @@ export function Portfolio() {
         className="relative min-h-screen overflow-hidden bg-[#050810]"
       >
         <Background />
+        <BackgroundParticles />
         <CRTOverlay />
         <FlashOverlay trigger={flashTrigger} />
 

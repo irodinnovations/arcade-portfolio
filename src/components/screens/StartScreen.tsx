@@ -84,9 +84,14 @@ export function StartScreen({ onStart, isExiting }: StartScreenProps) {
       </div>
 
       {/* Footer */}
-      <p className="absolute bottom-8 text-sm tracking-wider text-[#5080b0]">
-        An iRod Innovations Experience
-      </p>
+      <div className="absolute bottom-8 text-center">
+        <p className="text-sm tracking-wider text-[#5080b0]">
+          An iRod Innovations Experience
+        </p>
+        <p className="mt-2 font-orbitron text-[0.7rem] tracking-[0.3em] text-amber-400/70">
+          FREE PLAY
+        </p>
+      </div>
     </div>
   );
 }
