@@ -27,7 +27,7 @@ interface UseGameLoopProps {
   onDefeat: () => void;
   onShake: () => void;
   playSound: (type: 'tick' | 'select' | 'launch') => void;
-  playVoice: (name: string) => void;
+  playVoice: (name: string, priority?: boolean) => void;
   spawnParticles: (x: number, y: number, color: string, count?: number) => void;
 }
 

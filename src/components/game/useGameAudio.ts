@@ -7,10 +7,16 @@ interface UseGameAudioProps {
   muted: boolean;
 }
 
+// Voice cooldown: 3-6 seconds between voices
+const MIN_COOLDOWN = 3000;
+const MAX_COOLDOWN = 6000;
+
 export function useGameAudio({ muted }: UseGameAudioProps) {
   const voicesRef = useRef<Record<VoiceType, HTMLAudioElement> | null>(null);
   const unlockedRef = useRef(false);
   const readyRef = useRef(false);
+  const lastVoiceTimeRef = useRef(0);
+  const cooldownRef = useRef(0);
 
   // Initialize audio elements
   useEffect(() => {
@@ -83,8 +89,18 @@ export function useGameAudio({ muted }: UseGameAudioProps) {
   }, [unlockAudio]);
 
   const playVoice = useCallback(
-    (name: VoiceType | string) => {
+    (name: VoiceType | string, priority: boolean = false) => {
       if (muted || !voicesRef.current) return;
+
+      const now = Date.now();
+      
+      // Check cooldown (priority voices like "beware" bypass cooldown)
+      if (!priority) {
+        const timeSinceLastVoice = now - lastVoiceTimeRef.current;
+        if (timeSinceLastVoice < cooldownRef.current) {
+          return; // Still in cooldown, skip this voice
+        }
+      }
 
       // Try to unlock if not already (handles edge cases)
       if (!unlockedRef.current) {
@@ -94,17 +110,27 @@ export function useGameAudio({ muted }: UseGameAudioProps) {
       try {
         const audio = voicesRef.current[name as VoiceType];
         if (audio) {
-          // Stop any currently playing instance of this voice
-          audio.pause();
-          audio.currentTime = 0;
+          // Stop ALL currently playing voices first
+          Object.values(voicesRef.current).forEach((v) => {
+            v.pause();
+            v.currentTime = 0;
+          });
+          
           audio.playbackRate = 1.0;
           audio.volume = 0.9;
           
           const playPromise = audio.play();
           if (playPromise) {
-            playPromise.catch(() => {
-              // Silently handle - audio might not be unlocked yet
-            });
+            playPromise
+              .then(() => {
+                // Successfully started playing - set cooldown
+                lastVoiceTimeRef.current = now;
+                // Random cooldown between 3-6 seconds
+                cooldownRef.current = MIN_COOLDOWN + Math.random() * (MAX_COOLDOWN - MIN_COOLDOWN);
+              })
+              .catch(() => {
+                // Silently handle - audio might not be unlocked yet
+              });
           }
         }
       } catch {

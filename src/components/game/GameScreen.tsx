@@ -154,7 +154,7 @@ export function GameScreen({
           // Transition to boss phase
           waveTimerRef.current && clearInterval(waveTimerRef.current);
           enemySpawnRef.current && clearInterval(enemySpawnRef.current);
-          playVoice('beware');
+          playVoice('beware', true); // Priority voice
           onShake();
           return {
             ...s,
@@ -432,7 +432,10 @@ export function GameScreen({
           }}
         >
           <GameCanvas state={gameState} dimensions={dimensions} />
-          <GameHUD state={gameState} onFireBomb={handleFireBomb} onPause={togglePause} />
+          {/* Hide HUD during victory/defeat so buttons aren't blocked */}
+          {gameState.phase !== 'victory' && gameState.phase !== 'defeat' && (
+            <GameHUD state={gameState} onFireBomb={handleFireBomb} onPause={togglePause} />
+          )}
         </div>
       )}
 

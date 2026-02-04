@@ -7,7 +7,7 @@ interface GlitchOverlayProps {
   active: boolean;
   onComplete: () => void;
   playSound: (type: 'navigate' | 'countdown' | 'launch') => void;
-  playVoice: (name: string) => void;
+  playVoice: (name: string, priority?: boolean) => void;
   onShake: () => void;
   onUnlockAudio?: () => void;
 }
@@ -67,7 +67,7 @@ export function GlitchOverlay({
       clearInterval(glitchInterval);
       setPhase('reveal');
       setText('BEWARE, I BUILD!');
-      playVoice('beware');
+      playVoice('beware', true); // Priority voice - always plays
       playSound('launch');
       onShake();
     }, GLITCH_PHASE_2);
