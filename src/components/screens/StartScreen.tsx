@@ -69,17 +69,9 @@ export function StartScreen({ onStart, isExiting }: StartScreenProps) {
         </div>
 
         {/* Title */}
-        <h1 className="mb-2 font-orbitron text-[clamp(2rem,8vw,4rem)] font-black uppercase tracking-[0.15em] text-white [text-shadow:0_0_20px_rgba(0,212,255,0.5),0_0_40px_rgba(0,212,255,0.3)]">
+        <h1 className="mb-16 font-orbitron text-[clamp(2rem,8vw,4rem)] font-black uppercase tracking-[0.15em] text-white [text-shadow:0_0_20px_rgba(0,212,255,0.5),0_0_40px_rgba(0,212,255,0.3)]">
           Rodney John
         </h1>
-
-        {/* Subtitle */}
-        <p className="mb-4 font-rajdhani text-[clamp(0.9rem,2.5vw,1.3rem)] font-medium uppercase tracking-[0.3em] text-amber-400">
-          Operations Performance Manager
-        </p>
-        <p className="mb-16 font-rajdhani text-[clamp(0.7rem,2vw,1rem)] font-normal tracking-[0.2em] text-[#5080b0]">
-          Analytics & Reporting Systems • Building Data Teams Trust
-        </p>
 
         {/* Press Start */}
         <p
@@ -93,7 +85,7 @@ export function StartScreen({ onStart, isExiting }: StartScreenProps) {
 
       {/* Footer */}
       <p className="absolute bottom-8 text-sm tracking-wider text-[#5080b0]">
-        © 2026 RODNEY JOHN — ALL RIGHTS RESERVED
+        An iRod Innovations Experience
       </p>
     </div>
   );
