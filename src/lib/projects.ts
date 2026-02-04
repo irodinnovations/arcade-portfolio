@@ -49,7 +49,7 @@ export const projects: Project[] = [
     mascot: '/images/mascots/mascot-roadmap.webp',
     status: 'live',
     description:
-      'Visual formula builder that transforms spreadsheet logic into intuitive drag-and-drop workflows. Designed for business users who need powerful calculations without the formula syntax headaches.',
+      "Visual formulas for people who hate formulas. Spreadsheets are powerful, but formulas are painful. Syntax is cryptic, mistakes break everything, and even pros still Google SUMIF. The Improvement Roadmap replaces formulas with visual logic — just drag, connect, and calculate. No syntax. No guesswork. Just clear, powerful results. Built for business users who think in ideas, not Excelese.",
     url: '/mvp/improvement-roadmap',
     github: null,
   },
