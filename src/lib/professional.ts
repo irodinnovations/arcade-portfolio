@@ -80,7 +80,7 @@ export const PROJECTS = [
 
 export const TIMELINE = [
   {
-    date: '2019 – 2024',
+    date: '2019 – 2025',
     title: 'Manager, Operations Performance',
     company: 'Center for Employment Opportunities',
     highlights: [
