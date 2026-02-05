@@ -23,9 +23,9 @@ export const socialLinks = {
 // Site metadata
 export const siteConfig = {
   name: 'Rodney John',
-  title: 'Rodney John | Project Select',
+  title: 'Rodney John | Operations Performance & Analytics',
   description:
-    'Strategic Operations Leader with 10+ years driving performance. Builder, automation enthusiast, and innovation partner.',
+    'Operations Performance Manager with 10+ years building dashboards, automating workflows, and turning scattered metrics into decisions that stick.',
   url: 'https://rodneyjohn.com',
   ogImage: '/images/og-image.png',
   twitterHandle: '@rodneyjohn',
