@@ -1,8 +1,14 @@
 import type { Metadata } from 'next';
-import { Orbitron, Rajdhani } from 'next/font/google';
+import { Inter, Orbitron, Rajdhani } from 'next/font/google';
 import { SkipLink } from '@/components/layout/SkipLink';
 import { siteConfig } from '@/lib/constants';
 import './globals.css';
+
+const inter = Inter({
+  subsets: ['latin'],
+  variable: '--font-inter',
+  display: 'swap',
+});
 
 const orbitron = Orbitron({
   subsets: ['latin'],
@@ -78,8 +84,23 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={`${orbitron.variable} ${rajdhani.variable}`}>
-      <body className="font-rajdhani antialiased">
+    <html lang="en" className={`${inter.variable} ${orbitron.variable} ${rajdhani.variable}`} suppressHydrationWarning>
+      <head>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              try {
+                if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+                  document.documentElement.classList.add('dark')
+                } else {
+                  document.documentElement.classList.remove('dark')
+                }
+              } catch (_) {}
+            `,
+          }}
+        />
+      </head>
+      <body className="antialiased">
         <SkipLink />
         {children}
       </body>

@@ -34,3 +34,20 @@ export const siteConfig = {
 // Timer settings
 export const TIMER_DURATION = 99;
 export const TIMER_WARNING_THRESHOLD = 10;
+
+// Easter egg - arcade route
+export const ARCADE_URL = '/arcade';
+
+// Konami code sequence
+export const KONAMI_CODE = [
+  'ArrowUp',
+  'ArrowUp',
+  'ArrowDown',
+  'ArrowDown',
+  'ArrowLeft',
+  'ArrowRight',
+  'ArrowLeft',
+  'ArrowRight',
+  'KeyB',
+  'KeyA',
+] as const;

@@ -7,23 +7,33 @@ const config: Config = {
     './src/app/**/*.{js,ts,jsx,tsx,mdx}',
     './src/features/**/*.{js,ts,jsx,tsx,mdx}',
   ],
+  darkMode: 'class',
   theme: {
     extend: {
       fontFamily: {
+        sans: ['var(--font-inter)', '-apple-system', 'BlinkMacSystemFont', 'sans-serif'],
         orbitron: ['var(--font-orbitron)', 'sans-serif'],
         rajdhani: ['var(--font-rajdhani)', 'sans-serif'],
       },
       colors: {
+        // Arcade-specific colors (static)
         primary: '#00d4ff',
         'primary-dark': '#0099cc',
         secondary: '#ff6b35',
         gold: '#ffd700',
-        accent: '#00ff88',
         'bg-dark': '#050810',
         'bg-panel': '#0a0f1a',
         'bg-card': '#0d1428',
-        border: '#1a2545',
-        'text-muted': '#5080b0',
+        // Semantic colors (CSS variable based - adapt to mode)
+        background: 'var(--bg)',
+        surface: 'var(--surface)',
+        'surface-hover': 'var(--surface-hover)',
+        foreground: 'var(--pro-text)',
+        'text-muted': 'var(--pro-text-muted)',
+        accent: 'var(--pro-accent)',
+        'accent-glow': 'var(--accent-glow)',
+        border: 'var(--pro-border)',
+        success: 'var(--success)',
       },
       animation: {
         rotate: 'rotate 60s linear infinite',

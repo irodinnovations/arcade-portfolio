@@ -1,17 +1,49 @@
 @import 'tailwindcss';
 
 :root {
+  /* Arcade colors (default - used by /arcade route) */
   --primary: #00d4ff;
   --primary-dark: #0099cc;
   --secondary: #ff6b35;
   --gold: #ffd700;
-  --accent: #00ff88;
   --bg-dark: #050810;
   --bg-panel: #0a0f1a;
   --bg-card: #0d1428;
-  --border: #1a2545;
-  --text: #ffffff;
-  --text-muted: #5080b0;
+  
+  /* Shared semantic colors - professional light mode by default */
+  --bg: #fafafa;
+  --surface: #ffffff;
+  --surface-hover: #f5f5f5;
+  --pro-text: #171717;
+  --pro-text-muted: #525252;
+  --pro-accent: #3b82f6;
+  --accent-glow: rgba(59, 130, 246, 0.1);
+  --pro-border: #e5e5e5;
+  --success: #22c55e;
+}
+
+/* Professional dark mode */
+.dark {
+  --bg: #0a0a0a;
+  --surface: #141414;
+  --surface-hover: #1a1a1a;
+  --pro-text: #fafafa;
+  --pro-text-muted: #a1a1a1;
+  --pro-accent: #3b82f6;
+  --accent-glow: rgba(59, 130, 246, 0.15);
+  --pro-border: #262626;
+}
+
+/* Arcade mode - override for arcade pages */
+.arcade-mode {
+  --bg: #050810;
+  --surface: #0a0f1a;
+  --surface-hover: #0d1428;
+  --pro-text: #ffffff;
+  --pro-text-muted: #5080b0;
+  --pro-accent: #00ff88;
+  --accent-glow: rgba(0, 255, 136, 0.15);
+  --pro-border: #1a2545;
 }
 
 @theme inline {
@@ -175,4 +207,37 @@ body {
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
   }
+}
+
+/* Professional site styles */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Skip link for accessibility */
+.skip-link {
+  position: absolute;
+  top: -40px;
+  left: 0;
+  background: var(--pro-accent);
+  color: white;
+  padding: 8px 16px;
+  z-index: 100;
+  transition: top 0.2s;
+}
+
+.skip-link:focus {
+  top: 0;
+}
+
+/* Smooth fade-in animation for scroll-triggered elements */
+.fade-in-section {
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+}
+
+.fade-in-section.is-visible {
+  opacity: 1;
+  transform: translateY(0);
 }
