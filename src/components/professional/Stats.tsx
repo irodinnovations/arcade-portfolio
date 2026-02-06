@@ -16,7 +16,7 @@ export function Stats() {
       )}
       aria-label="Key statistics"
     >
-      <div className="mx-auto grid max-w-4xl grid-cols-1 gap-8 sm:grid-cols-3">
+      <div className="mx-auto grid max-w-5xl grid-cols-2 gap-6 sm:grid-cols-3 lg:grid-cols-6">
         {STATS.map(({ value, label }) => (
           <div key={label} className="text-center">
             <div className="mb-1 text-4xl font-bold text-foreground sm:text-5xl">

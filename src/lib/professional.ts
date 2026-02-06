@@ -9,9 +9,12 @@ export const SOCIAL_LINKS = {
 } as const
 
 export const STATS = [
-  { value: '10+', label: 'Years in Operations' },
-  { value: '50+', label: 'Dashboards Built' },
-  { value: '6', label: 'Products Shipped' },
+  { value: '400+', label: 'Dashboards Built' },
+  { value: '3,500+', label: 'Hours Automated' },
+  { value: '30+', label: 'Sites Nationwide' },
+  { value: '200+', label: 'Staff Trained' },
+  { value: '200+', label: 'KPIs Defined' },
+  { value: '40%', label: 'Accuracy Improvement' },
 ] as const
 
 export const CAPABILITIES = [
