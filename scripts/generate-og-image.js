@@ -5,38 +5,24 @@ async function generateProfessionalOGImage() {
   const width = 1200;
   const height = 630;
   
-  // Create SVG with professional branding (no "experience" tagline)
+  // Create SVG with clean white/black branding to match site
   const svg = `
     <svg width="${width}" height="${height}" xmlns="http://www.w3.org/2000/svg">
-      <defs>
-        <linearGradient id="bgGradient" x1="0%" y1="0%" x2="0%" y2="100%">
-          <stop offset="0%" style="stop-color:#0a1628;stop-opacity:1" />
-          <stop offset="100%" style="stop-color:#050810;stop-opacity:1" />
-        </linearGradient>
-        <linearGradient id="accentGradient" x1="0%" y1="0%" x2="100%" y2="0%">
-          <stop offset="0%" style="stop-color:#00d4ff;stop-opacity:1" />
-          <stop offset="100%" style="stop-color:#0099cc;stop-opacity:1" />
-        </linearGradient>
-      </defs>
+      <!-- Clean white background -->
+      <rect width="${width}" height="${height}" fill="#ffffff"/>
       
-      <!-- Background -->
-      <rect width="${width}" height="${height}" fill="url(#bgGradient)"/>
-      
-      <!-- Subtle grid pattern -->
-      <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
-        <path d="M 40 0 L 0 0 0 40" fill="none" stroke="#1a2545" stroke-width="0.5"/>
-      </pattern>
-      <rect width="${width}" height="${height}" fill="url(#grid)" opacity="0.3"/>
+      <!-- Subtle border -->
+      <rect x="0" y="0" width="${width}" height="${height}" fill="none" stroke="#e5e5e5" stroke-width="2"/>
       
       <!-- Accent line at top -->
-      <rect x="0" y="0" width="${width}" height="4" fill="url(#accentGradient)"/>
+      <rect x="0" y="0" width="${width}" height="4" fill="#000000"/>
       
       <!-- Main text: RODNEY JOHN -->
       <text x="${width/2}" y="${height/2 - 40}" 
             font-family="system-ui, -apple-system, sans-serif" 
             font-size="72" 
             font-weight="700" 
-            fill="#ffffff" 
+            fill="#000000" 
             text-anchor="middle"
             letter-spacing="8">RODNEY JOHN</text>
       
@@ -44,22 +30,22 @@ async function generateProfessionalOGImage() {
       <text x="${width/2}" y="${height/2 + 40}" 
             font-family="system-ui, -apple-system, sans-serif" 
             font-size="28" 
-            font-weight="400" 
-            fill="#00d4ff" 
+            font-weight="500" 
+            fill="#333333" 
             text-anchor="middle"
             letter-spacing="2">Operations Performance &amp; Analytics</text>
       
       <!-- Decorative line -->
       <line x1="${width/2 - 150}" y1="${height/2 + 80}" 
             x2="${width/2 + 150}" y2="${height/2 + 80}" 
-            stroke="#1a2545" stroke-width="2"/>
+            stroke="#e5e5e5" stroke-width="2"/>
       
       <!-- Bottom tagline -->
       <text x="${width/2}" y="${height/2 + 130}" 
             font-family="system-ui, -apple-system, sans-serif" 
             font-size="18" 
             font-weight="400" 
-            fill="#5080b0" 
+            fill="#666666" 
             text-anchor="middle"
             letter-spacing="1">10+ Years Building Dashboards, Automating Workflows, Driving Results</text>
       
@@ -68,7 +54,7 @@ async function generateProfessionalOGImage() {
             font-family="system-ui, -apple-system, sans-serif" 
             font-size="16" 
             font-weight="400" 
-            fill="#5080b0" 
+            fill="#666666" 
             text-anchor="middle">rodneyjohn.com</text>
     </svg>
   `;
