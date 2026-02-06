@@ -14,6 +14,18 @@ async function generateProfessionalOGImage() {
       <!-- Accent line at top -->
       <rect x="0" y="0" width="${width}" height="4" fill="#ffffff"/>
       
+      <!-- RJ Monogram - top left -->
+      <g transform="translate(50, 40)">
+        <rect x="0" y="0" width="60" height="60" fill="none" stroke="#ffffff" stroke-width="2"/>
+        <text x="30" y="43" 
+              font-family="system-ui, -apple-system, sans-serif" 
+              font-size="28" 
+              font-weight="700" 
+              fill="#ffffff" 
+              text-anchor="middle"
+              letter-spacing="2">RJ</text>
+      </g>
+      
       <!-- Main text: RODNEY JOHN -->
       <text x="${width/2}" y="${height/2 - 40}" 
             font-family="system-ui, -apple-system, sans-serif" 
