@@ -5,6 +5,9 @@ import { CONTACT_EMAIL } from '@/lib/professional'
 import { useScrollAnimation } from '@/hooks/useScrollAnimation'
 import clsx from 'clsx'
 
+// Formspree form ID - get yours at https://formspree.io
+const FORMSPREE_ID = process.env.NEXT_PUBLIC_FORMSPREE_ID || 'YOUR_FORM_ID'
+
 export function Contact() {
   const { ref, isVisible } = useScrollAnimation()
   const [formData, setFormData] = useState({ name: '', email: '', message: '' })
@@ -17,16 +20,17 @@ export function Contact() {
     setErrorMessage('')
 
     try {
-      const response = await fetch('/api/contact', {
+      const response = await fetch(`https://formspree.io/f/${FORMSPREE_ID}`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 
+          'Content-Type': 'application/json',
+          'Accept': 'application/json'
+        },
         body: JSON.stringify(formData),
       })
 
-      const data = await response.json()
-
       if (!response.ok) {
-        throw new Error(data.error || 'Failed to send message')
+        throw new Error('Failed to send message')
       }
 
       setStatus('success')
