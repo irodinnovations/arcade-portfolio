@@ -3,7 +3,7 @@
 export const CONTACT_EMAIL = 'rodney@rodneyjohn.com'
 
 export const SOCIAL_LINKS = {
-  linkedin: 'https://linkedin.com/in/rodneyjohn',
+  linkedin: 'https://www.linkedin.com/in/rodney-john',
   github: 'https://github.com/irodinnovations',
   substack: 'https://vibecodersdispatch.substack.com',
 } as const
@@ -63,19 +63,19 @@ export const PROJECTS = [
     description:
       'Visual formula builder that turns spreadsheet calculations into drag-and-drop workflows. Making Excel accessible to everyone.',
     stats: [
-      { value: '10+', label: 'formula types' },
-      { value: 'MVP', label: 'complete' },
+      { value: '31', label: 'formula types' },
+      { value: '118', label: 'tests passing' },
     ],
     link: '#',
   },
   {
-    tag: 'Trading',
-    title: 'XRPL Trader',
+    tag: 'Templates',
+    title: 'KPI Command Center',
     description:
-      'Automated trading system for the XRP Ledger. Real-time market analysis with configurable strategies.',
+      'Plug-and-play KPI tracking system with 52 pre-built metrics, auto-calculations, and executive-ready reports. Built for operations teams.',
     stats: [
-      { value: '140', label: 'tests passing' },
-      { value: '10', label: 'modules' },
+      { value: '52', label: 'KPIs included' },
+      { value: '6', label: 'worksheets' },
     ],
     link: '#',
   },

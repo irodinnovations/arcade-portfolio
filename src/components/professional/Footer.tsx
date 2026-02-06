@@ -6,8 +6,8 @@ import { ARCADE_URL } from '@/lib/constants'
 export function Footer() {
   return (
     <footer className="border-t border-border px-6 py-10" role="contentinfo">
-      <div className="mx-auto flex max-w-4xl flex-col items-center justify-between gap-6 sm:flex-row">
-        <nav className="flex gap-6" aria-label="Social links">
+      <div className="mx-auto flex max-w-4xl flex-col items-center gap-4">
+        <nav className="flex flex-wrap justify-center gap-6" aria-label="Social links">
           <a
             href={SOCIAL_LINKS.linkedin}
             className="text-sm text-text-muted transition-colors hover:text-foreground focus-visible:outline-accent"
